@@ -1,0 +1,15 @@
+[
+  {"name":"แป้ง","category":"สูตรลูกชิ้น","unit":"kg","qty":0},
+  {"name":"ผงฟู","category":"สูตรลูกชิ้น","unit":"kg","qty":0},
+  {"name":"กันบูด","category":"สูตรลูกชิ้น/หมูยอ","unit":"kg","qty":0},
+  {"name":"กลูเตน","category":"สูตรลูกชิ้น/หมูยอ","unit":"kg","qty":0},
+  {"name":"ผงปรุงรสหมู","category":"สูตรลูกชิ้น/หมูยอ","unit":"kg","qty":0},
+  {"name":"หัวชูรส","category":"สูตรลูกชิ้น/หมูยอ","unit":"kg","qty":0},
+  {"name":"พริกไทยขาว","category":"สูตรลูกชิ้น/หมูยอ","unit":"kg","qty":0},
+  {"name":"พริกไทยดำ","category":"สูตรลูกชิ้น/หมูยอ","unit":"kg","qty":0},
+  {"name":"เกลือ","category":"สูตรลูกชิ้น","unit":"kg","qty":0},
+  {"name":"ผสมดีน้ำตาล","category":"สูตรลูกชิ้น","unit":"kg","qty":0},
+  {"name":"แป้งโม","category":"สูตรหมูยอ","unit":"kg","qty":0},
+  {"name":"ผงมิกซ์","category":"สูตรหมูยอ","unit":"kg","qty":0},
+  {"name":"น้ำตาลทราย","category":"สูตรหมูยอ","unit":"kg","qty":0}
+]
