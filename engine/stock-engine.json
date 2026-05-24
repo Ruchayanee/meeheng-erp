@@ -1,0 +1,26 @@
+{
+  "productionRules": [
+    {
+      "product": "ลูกชิ้นสูตรใหญ่",
+      "deduct": [
+        {"ingredient":"แป้ง","amount":3.5,"unit":"kg"},
+        {"ingredient":"ผงฟู","amount":0.3,"unit":"kg"},
+        {"ingredient":"กันบูด","amount":0.2,"unit":"kg"},
+        {"ingredient":"กลูเตน","amount":0.3,"unit":"kg"},
+        {"ingredient":"ผงปรุงรสหมู","amount":0.25,"unit":"kg"},
+        {"ingredient":"หัวชูรส","amount":0.15,"unit":"kg"},
+        {"ingredient":"เกลือ","amount":0.2,"unit":"kg"}
+      ]
+    },
+    {
+      "product": "หมูยอสูตรหลัก",
+      "deduct": [
+        {"ingredient":"แป้งโม","amount":2.5,"unit":"kg"},
+        {"ingredient":"ผงมิกซ์","amount":0.3,"unit":"kg"},
+        {"ingredient":"กันบูด","amount":0.2,"unit":"kg"},
+        {"ingredient":"น้ำตาลทราย","amount":0.3,"unit":"kg"},
+        {"ingredient":"กลูเตน","amount":0.3,"unit":"kg"}
+      ]
+    }
+  ]
+}
