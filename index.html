@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meeheng Food ERP</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#f3f4f6;margin:0;padding:0}
+    header{background:#111827;color:#fff;padding:28px}
+    .container{padding:24px;max-width:1200px;margin:auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:#fff;padding:24px;border-radius:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    h1,h2,h3,p{margin:0}
+    .mt{margin-top:16px}
+    button{width:100%;padding:18px;border:none;border-radius:14px;background:#111827;color:white;font-size:18px;font-weight:bold;cursor:pointer}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px;border-bottom:1px solid #ddd;text-align:left}
+    .tag{display:inline-block;background:#e5e7eb;padding:6px 10px;border-radius:999px;font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Meeheng Food ERP</h1>
+    <p class="mt">ระบบบริหารโรงงาน มีเฮงฟู้ด</p>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <div class="card">
+        <h3>ยอดขายวันนี้</h3>
+        <h2 class="mt">฿ 24,500</h2>
+      </div>
+
+      <div class="card">
+        <h3>กำไรวันนี้</h3>
+        <h2 class="mt">฿ 8,200</h2>
+      </div>
+
+      <div class="card">
+        <h3>กำลังผลิต</h3>
+        <h2 class="mt">3 Batch</h2>
+      </div>
+
+      <div class="card">
+        <h3>แม่ค้าออนไลน์</h3>
+        <h2 class="mt">2 คน</h2>
+      </div>
+    </div>
+
+    <div class="grid mt">
+      <div class="card">
+        <h2>ระบบแม่ค้า</h2>
+
+        <div class="grid mt">
+          <button>+1 ลูกชิ้นเล็ก</button>
+          <button>+1 ลูกชิ้นใหญ่</button>
+          <button>+1 หมูยอ</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>สต๊อกวัตถุดิบ</h2>
+
+        <table class="mt">
+          <tr><th>วัตถุดิบ</th><th>คงเหลือ</th></tr>
+          <tr><td>หมูบด</td><td>120 kg</td></tr>
+          <tr><td>แป้ง</td><td>40 kg</td></tr>
+          <tr><td>ถุงบรรจุ</td><td>1,200 ใบ</td></tr>
+          <tr><td>สติ๊กเกอร์</td><td>900 ใบ</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mt">
+      <h2>Roadmap</h2>
+      <div class="grid mt">
+        <div>
+          <span class="tag">Phase 1</span>
+          <p class="mt">Inventory / Production</p>
+        </div>
+
+        <div>
+          <span class="tag">Phase 2</span>
+          <p class="mt">Vendor Sales</p>
+        </div>
+
+        <div>
+          <span class="tag">Phase 3</span>
+          <p class="mt">Accounting</p>
+        </div>
+
+        <div>
+          <span class="tag">Phase 4</span>
+          <p class="mt">Analytics & AI</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
