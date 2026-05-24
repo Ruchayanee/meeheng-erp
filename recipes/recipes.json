@@ -1,0 +1,32 @@
+[
+  {
+    "name":"ลูกชิ้นสูตรใหญ่",
+    "version":"V1",
+    "ingredients":[
+      {"name":"แป้ง","amount":3.5,"unit":"kg"},
+      {"name":"ผงฟู","amount":0.3,"unit":"kg"},
+      {"name":"กันบูด","amount":0.2,"unit":"kg"},
+      {"name":"กลูเตน","amount":0.3,"unit":"kg"},
+      {"name":"ผงปรุงรสหมู","amount":0.25,"unit":"kg"},
+      {"name":"หัวชูรส","amount":0.15,"unit":"kg"},
+      {"name":"พริกไทยขาว","amount":3,"unit":"tbsp"},
+      {"name":"พริกไทยดำ","amount":1,"unit":"tbsp"},
+      {"name":"เกลือ","amount":0.2,"unit":"kg"}
+    ]
+  },
+  {
+    "name":"หมูยอสูตรหลัก",
+    "version":"V1",
+    "ingredients":[
+      {"name":"แป้งโม","amount":2.5,"unit":"kg"},
+      {"name":"ผงมิกซ์","amount":0.3,"unit":"kg"},
+      {"name":"กันบูด","amount":0.2,"unit":"kg"},
+      {"name":"น้ำตาลทราย","amount":0.3,"unit":"kg"},
+      {"name":"กลูเตน","amount":0.3,"unit":"kg"},
+      {"name":"ผงปรุงรสหมู","amount":0.2,"unit":"kg"},
+      {"name":"หัวชูรส","amount":0.1,"unit":"kg"},
+      {"name":"พริกไทยขาว","amount":1,"unit":"tbsp"},
+      {"name":"พริกไทยดำ","amount":3,"unit":"tbsp"}
+    ]
+  }
+]
