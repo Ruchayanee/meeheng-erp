@@ -1,1 +1,154 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meeheng Super App</title><style>body{margin:0;background:#f7f1e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3f2a20}header{padding:34px 24px 18px;background:#9f1d20;color:#fffaf4;border-bottom-left-radius:28px;border-bottom-right-radius:28px}h1,h2,h3,p{margin:0}.wrap{padding:22px;max-width:900px;margin:auto}.hero{font-size:34px;font-weight:700;line-height:1.2}.sub{margin-top:10px;color:#f8ddd0;font-size:15px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:24px}.card{background:#fffaf4;border-radius:28px;padding:24px;box-shadow:0 10px 30px rgba(93,32,24,.08)}.emoji{font-size:42px}.title{font-size:28px;font-weight:700;margin-top:18px}.desc{margin-top:10px;color:#876454;line-height:1.5}.btn{margin-top:22px;background:#aa2326;color:#fffaf4;border:0;padding:16px 18px;border-radius:18px;font-size:17px;font-weight:700;width:100%;cursor:pointer}.quick{margin-top:24px;background:#fffaf4;border-radius:24px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.tag{background:#f3dfcb;padding:8px 12px;border-radius:999px;font-size:13px;color:#7b4331}.activity{margin-top:24px}.item{background:#fffaf4;border-radius:20px;padding:18px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}.muted{color:#8f6e5d}</style></head><body><header><div class="hero">Meeheng<br>Operations Center</div><p class="sub">ระบบควบคุมโรงงาน มีเฮงฟู้ด</p></header><main class="wrap"><section class="quick"><div><h3>Quick Overview</h3><p class="muted" style="margin-top:6px">ภาพรวมของระบบทั้งหมด</p></div><div style="display:flex;gap:10px;flex-wrap:wrap"><span class="tag">ยอดขายวันนี้ ฿0</span><span class="tag">Stock Alert 0</span><span class="tag">Vendor Online 4</span></div></section><section class="grid"><div class="card"><div class="emoji">💰</div><div class="title">บัญชี</div><div class="desc">ดูยอดขาย รายรับ รายจ่าย และกำไรของทั้งระบบแบบรวมศูนย์</div><button class="btn">เข้าสู่ระบบบัญชี</button></div><div class="card"><div class="emoji">📦</div><div class="title">สต๊อก</div><div class="desc">ตรวจสอบวัตถุดิบคงเหลือ ปรับ stock และเช็คสถานะสินค้า</div><button class="btn" onclick="window.location.href='/meeheng-erp/inventory/'">เข้าสู่ระบบสต๊อก</button></div></section><section class="activity"><h2>กิจกรรมล่าสุด</h2><div class="item"><div><strong>Vendor App</strong><div class="muted">แม่ค้า: ตุ่ย / ยุ / แบน / มิ</div></div><div class="tag">ACTIVE</div></div><div class="item"><div><strong>Google Sheets Database</strong><div class="muted">เชื่อมต่อ Apps Script Backend แล้ว</div></div><div class="tag">CONNECTED</div></div><div class="item"><div><strong>LINE LIFF Ready</strong><div class="muted">เตรียมเชื่อม Line Official Account</div></div><div class="tag">COMING SOON</div></div></section><section class="card" style="margin-top:24px"><h2>Vendor App</h2><p class="muted" style="margin-top:10px">ระบบแม่ค้าแยกจากระบบบริหารโดยสมบูรณ์</p><button class="btn" onclick="window.open('/meeheng-erp/vendor-app/','_blank')">เปิด Vendor App</button></section></main></body></html>
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meeheng Food Super App</title>
+
+<meta name="theme-color" content="#9f1d20">
+
+<style>
+body{
+margin:0;
+background:#f4f1ec;
+font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+color:#222;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+padding:20px;
+}
+
+.top{
+text-align:right;
+font-size:28px;
+padding-top:10px;
+}
+
+.logo-wrap{
+text-align:center;
+margin-top:30px;
+}
+
+.logo{
+width:220px;
+height:220px;
+object-fit:cover;
+border-radius:50%;
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+.title{
+font-size:42px;
+font-weight:800;
+margin-top:20px;
+color:#8f1111;
+}
+
+.subtitle{
+font-size:20px;
+color:#666;
+margin-top:8px;
+font-weight:600;
+}
+
+.menu{
+margin-top:40px;
+display:grid;
+gap:22px;
+}
+
+.card{
+border:none;
+border-radius:28px;
+padding:26px;
+font-size:28px;
+font-weight:800;
+color:white;
+text-align:left;
+box-shadow:0 10px 24px rgba(0,0,0,.12);
+}
+
+.card small{
+display:block;
+font-size:14px;
+margin-top:10px;
+opacity:.9;
+}
+
+.account{
+background:#1e2b45;
+}
+
+.stock{
+background:#0ca36c;
+}
+
+.vendor{
+background:#f2a20c;
+}
+
+.footer{
+text-align:center;
+margin-top:30px;
+font-size:13px;
+color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="top">🔔</div>
+
+<div class="logo-wrap">
+<img src="https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/logo.svg" class="logo">
+
+<div class="title">
+Mee Heng Food
+</div>
+
+<div class="subtitle">
+Super App Management System
+</div>
+</div>
+
+<div class="menu">
+
+<button class="card account">
+📊 ระบบบัญชี
+<small>
+รายรับ รายจ่าย กำไร และยอดขายรวม
+</small>
+</button>
+
+<button class="card stock"
+onclick="window.location.href='/meeheng-erp/inventory/'">
+📦 ระบบสต๊อก
+<small>
+ตรวจสอบวัตถุดิบและปรับสต๊อก
+</small>
+</button>
+
+<button class="card vendor"
+onclick="window.open('/meeheng-erp/vendor-app/')">
+🧾 ระบบแม่ค้า
+<small>
+บันทึกยอดขายผ่าน Vendor App
+</small>
+</button>
+
+</div>
+
+<div class="footer">
+Meeheng Operations Center
+</div>
+
+</div>
+
+</body>
+</html>
