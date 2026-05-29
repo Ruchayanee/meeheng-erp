@@ -3,32 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meeheng ERP</title>
+  <title>Mee Heng Food Super App</title>
   <style>
     :root {
-      --bg: #f4f6f8;
+      --bg: #f3f0ea;
       --panel: #ffffff;
-      --ink: #111827;
-      --muted: #64748b;
-      --line: #d9e0e8;
+      --ink: #2b2b2b;
+      --muted: #777777;
+      --line: #ece7df;
       --blue: #2563eb;
-      --green: #15803d;
-      --amber: #b45309;
-      --red: #b91c1c;
+      --green: #17b169;
+      --amber: #ffb703;
+      --red: #d62828;
     }
 
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: Arial, "Noto Sans Thai", sans-serif; line-height: 1.45; }
-    header { background: #101827; color: #ffffff; padding: 18px; }
-    main, .topbar { margin: 0 auto; max-width: 1240px; }
-    main { padding: 16px; }
-    h1 { font-size: 24px; margin: 0; }
-    h2 { font-size: 18px; margin: 0 0 12px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Noto Sans Thai", sans-serif; line-height: 1.45; }
+    header { color: var(--ink); padding: 14px 24px 0; }
+    main, .topbar { margin: 0 auto; max-width: 1120px; }
+    main { padding: 0 24px 24px; }
+    h1 { color: #971818; font-size: 52px; font-weight: 900; line-height: 1.05; margin: 18px 0 8px; text-align: center; }
+    h2 { font-size: 22px; margin: 0 0 12px; }
     p { color: var(--muted); margin: 4px 0 0; }
     button, input, select, textarea { font: inherit; }
-    button { border: 0; border-radius: 8px; cursor: pointer; font-weight: 700; min-height: 40px; padding: 10px 14px; }
+    button { border: 0; border-radius: 18px; cursor: pointer; font-weight: 800; min-height: 44px; padding: 10px 14px; }
     button:disabled { cursor: wait; opacity: .55; }
-    input, select, textarea { border: 1px solid #cbd5e1; border-radius: 8px; min-height: 40px; padding: 9px 10px; width: 100%; }
+    input, select, textarea { border: 1px solid #ddd4c8; border-radius: 16px; min-height: 44px; padding: 10px 12px; width: 100%; }
     textarea { min-height: 78px; resize: vertical; }
     label { color: #334155; display: grid; font-size: 13px; font-weight: 700; gap: 6px; }
     form { display: grid; gap: 12px; }
@@ -37,23 +37,33 @@
     th { background: #f8fafc; color: #334155; font-size: 13px; position: sticky; top: 0; }
     tr:last-child td { border-bottom: 0; }
 
-    .topbar { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
-    .actions, .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tabs { margin: 16px 0; overflow-x: auto; }
-    .tab { background: #e2e8f0; color: #334155; }
-    .tab.active { background: #101827; color: #ffffff; }
+    .topbar { display: block; max-width: 760px; }
+    .bell { font-size: 28px; padding-top: 8px; text-align: right; }
+    .center { margin-top: 18px; text-align: center; }
+    .logo { filter: drop-shadow(0 10px 25px rgba(0,0,0,.12)); height: 220px; object-fit: contain; width: 220px; }
+    .subtitle { color: #777; font-size: 20px; font-weight: 800; text-align: center; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 18px auto 4px; }
+    .tabs { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 28px auto 22px; max-width: 1120px; }
+    .tab { background: linear-gradient(135deg,#1e293b,#334155); box-shadow: 0 10px 25px rgba(0,0,0,.12); color: #ffffff; min-height: 92px; padding: 20px; text-align: left; }
+    .tab strong { display: block; font-size: 25px; line-height: 1.1; }
+    .tab small { display: block; font-size: 13px; font-weight: 700; margin-top: 8px; opacity: .92; }
+    .tab[data-tab="dashboard"], .tab[data-tab="accounting"] { background: linear-gradient(135deg,#a31212,#d62828); }
+    .tab[data-tab="receive"], .tab[data-tab="inventory"] { background: linear-gradient(135deg,#0b8d4d,#17b169); }
+    .tab[data-tab="production"], .tab[data-tab="sales"] { background: linear-gradient(135deg,#d48b00,#ffb703); color: #2b2b2b; }
+    .tab[data-tab="recipes"] { background: linear-gradient(135deg,#1e293b,#475569); }
+    .tab.active { outline: 4px solid rgba(151,24,24,.22); transform: translateY(-2px); }
     .btn-primary { background: var(--blue); color: #ffffff; }
     .btn-green { background: var(--green); color: #ffffff; }
-    .btn-amber { background: var(--amber); color: #ffffff; }
+    .btn-amber { background: var(--amber); color: #2b2b2b; }
     .btn-light { background: #e2e8f0; color: #0f172a; }
-    .status { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); border-radius: 999px; color: #e2e8f0; padding: 7px 11px; }
+    .status { background: #ffffff; border: 1px solid #e4ddd4; border-radius: 999px; color: #971818; font-weight: 800; padding: 8px 12px; }
     .panel { display: none; }
     .panel.active { display: block; }
     .grid { display: grid; gap: 12px; }
     .kpis { grid-template-columns: repeat(6, minmax(150px, 1fr)); margin-bottom: 12px; }
     .two-col { grid-template-columns: minmax(280px, .75fr) minmax(320px, 1.25fr); }
     .form-row { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 10px 20px rgba(0,0,0,.08); padding: 20px; }
     .kpi { min-height: 100px; }
     .kpi span { color: var(--muted); display: block; font-size: 13px; margin-bottom: 10px; }
     .kpi strong { display: block; font-size: 26px; line-height: 1.1; overflow-wrap: anywhere; }
@@ -64,18 +74,23 @@
     .pill.ok { background: #dcfce7; color: #166534; }
     .pill.low { background: #fef3c7; color: #92400e; }
     .pill.out { background: #fee2e2; color: #991b1b; }
-    .notice { background: #ecfeff; border: 1px solid #a5f3fc; border-radius: 8px; color: #155e75; margin-bottom: 12px; padding: 10px 12px; }
+    .notice { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 18px; color: #9a3412; margin: 12px auto; max-width: 1120px; padding: 12px 14px; }
     .notice.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
     .notice.success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
 
     @media (max-width: 980px) {
       .topbar { align-items: flex-start; flex-direction: column; }
+      .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .two-col { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
       header, main { padding-left: 12px; padding-right: 12px; }
+      h1 { font-size: 42px; }
+      .logo { height: 180px; width: 180px; }
+      .subtitle { font-size: 18px; }
+      .tabs { grid-template-columns: 1fr; }
       .kpis, .form-row { grid-template-columns: 1fr; }
     }
   </style>
@@ -83,9 +98,11 @@
 <body>
   <header>
     <div class="topbar">
-      <div>
-        <h1>Meeheng ERP</h1>
-        <p>GitHub Pages + Google Apps Script backend</p>
+      <div class="bell" aria-hidden="true">🔔</div>
+      <div class="center">
+        <img class="logo" src="https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png" alt="Mee Heng Food">
+        <h1>Mee Heng Food</h1>
+        <p class="subtitle">Super App Management System</p>
       </div>
       <div class="actions">
         <span class="status" id="dbStatus">กำลังโหลด</span>
@@ -99,13 +116,13 @@
     <div id="message"></div>
 
     <nav class="tabs" aria-label="Main menu">
-      <button class="tab active" data-tab="dashboard" type="button">Dashboard</button>
-      <button class="tab" data-tab="receive" type="button">รับเข้า</button>
-      <button class="tab" data-tab="production" type="button">ผลิต</button>
-      <button class="tab" data-tab="sales" type="button">ขาย</button>
-      <button class="tab" data-tab="accounting" type="button">บัญชี</button>
-      <button class="tab" data-tab="inventory" type="button">สต๊อก</button>
-      <button class="tab" data-tab="recipes" type="button">สูตร</button>
+      <button class="tab active" data-tab="dashboard" type="button"><strong>📊 Dashboard</strong><small>ภาพรวมวันนี้และเดือนนี้</small></button>
+      <button class="tab" data-tab="receive" type="button"><strong>📥 รับเข้า</strong><small>บันทึกวัตถุดิบและของเข้า</small></button>
+      <button class="tab" data-tab="production" type="button"><strong>🥣 ผลิต</strong><small>ตัดวัตถุดิบตามสูตร</small></button>
+      <button class="tab" data-tab="sales" type="button"><strong>🛒 ขาย</strong><small>บันทึกยอดขายหน้าร้านและแม่ค้า</small></button>
+      <button class="tab" data-tab="accounting" type="button"><strong>💰 บัญชี</strong><small>ค่าใช้จ่ายและกำไร</small></button>
+      <button class="tab" data-tab="inventory" type="button"><strong>📦 สต๊อก</strong><small>ตรวจคงเหลือทั้งหมด</small></button>
+      <button class="tab" data-tab="recipes" type="button"><strong>🧾 สูตร</strong><small>ลูกชิ้น หมูยอ และส่วนผสม</small></button>
     </nav>
 
     <section class="panel active" id="dashboard">
