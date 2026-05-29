@@ -106,7 +106,7 @@ function doPost(e) {
 
 function handleApiRequest_(e) {
   var params = e && e.parameter ? e.parameter : {};
-  var callback = params.callback || '';
+  var callback = params.jsonp || params.callback || '';
 
   try {
     var result = runApiAction_(params, e);
