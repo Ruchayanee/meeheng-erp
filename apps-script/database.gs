@@ -1,5 +1,6 @@
 var MEEHENG_DB_VERSION = '2026-05-29.1';
 var MEEHENG_TIME_ZONE = 'Asia/Bangkok';
+var MEEHENG_DEFAULT_SPREADSHEET_ID = '1rofHESQvjWRnDwz7szudx_eQIsepHm9Pc7gqalgGNHY';
 
 var MEEHENG_SHEETS = {
   INVENTORY: 'Inventory',
@@ -127,6 +128,11 @@ function initializeDb_(spreadsheet) {
 function getDb_() {
   var properties = PropertiesService.getScriptProperties();
   var spreadsheetId = properties.getProperty('MEEHENG_SPREADSHEET_ID');
+
+  if (!spreadsheetId && MEEHENG_DEFAULT_SPREADSHEET_ID) {
+    spreadsheetId = MEEHENG_DEFAULT_SPREADSHEET_ID;
+    properties.setProperty('MEEHENG_SPREADSHEET_ID', spreadsheetId);
+  }
 
   if (spreadsheetId) {
     try {

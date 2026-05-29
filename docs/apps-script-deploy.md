@@ -48,7 +48,9 @@
 
 - Apps Script project: https://script.google.com/d/169i03_Ix8bd9QP1lWCXqu0atagWnhLH89qWjFua2O5MkaOX_ZVGHO5Kf/edit
 - Web app: https://script.google.com/macros/s/AKfycbwptw33KUebRlZiwONLAHXaAxcCXF75LDTn577ysZm7CXZoYlzJywKjEuX_vDD2QLV7eA/exec
-- Access: anyone with Google sign-in
+- GitHub Pages: https://ruchayanee.github.io/meeheng-erp/
+- Google Sheets database: https://docs.google.com/spreadsheets/d/1rofHESQvjWRnDwz7szudx_eQIsepHm9Pc7gqalgGNHY/edit
+- Access: public backend for GitHub Pages
 
 ## การใช้งานประจำวัน
 

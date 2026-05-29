@@ -31,8 +31,14 @@
 
 ## ใช้งานครั้งแรก
 
-Web app ที่ deploy แล้ว:
+หน้าระบบบน GitHub Pages:
+https://ruchayanee.github.io/meeheng-erp/
+
+Apps Script backend:
 https://script.google.com/macros/s/AKfycbwptw33KUebRlZiwONLAHXaAxcCXF75LDTn577ysZm7CXZoYlzJywKjEuX_vDD2QLV7eA/exec
+
+Google Sheets database:
+https://docs.google.com/spreadsheets/d/1rofHESQvjWRnDwz7szudx_eQIsepHm9Pc7gqalgGNHY/edit
 
 1. เปิด Google Apps Script project ใหม่ หรือ project ที่ผูกกับ Google Sheets
 2. คัดลอกไฟล์ทั้งหมดใน `apps-script/` เข้า Apps Script project

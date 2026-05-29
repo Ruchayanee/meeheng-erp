@@ -1,5 +1,9 @@
 /** Meeheng Food ERP */
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.api) {
+    return handleApiRequest_(e);
+  }
+
   ensureDatabaseReady_();
 
   return HtmlService
@@ -94,4 +98,82 @@ function getDatabaseInfo_() {
     spreadsheetUrl: spreadsheet.getUrl(),
     version: MEEHENG_DB_VERSION
   };
+}
+
+function doPost(e) {
+  return handleApiRequest_(e);
+}
+
+function handleApiRequest_(e) {
+  var params = e && e.parameter ? e.parameter : {};
+  var callback = params.callback || '';
+
+  try {
+    var result = runApiAction_(params, e);
+    return createApiOutput_(result, callback);
+  } catch (error) {
+    return createApiOutput_({
+      ok: false,
+      error: error.message || String(error)
+    }, callback);
+  }
+}
+
+function runApiAction_(params, e) {
+  var action = params.action || 'getAppData';
+  var payload = parseApiPayload_(params, e);
+
+  if (action === 'getAppData') {
+    var data = getAppData();
+    data.ok = true;
+    return data;
+  }
+
+  if (action === 'setupDatabase') {
+    return setupDatabase();
+  }
+
+  if (action === 'receiveStock') {
+    return receiveStock(payload);
+  }
+
+  if (action === 'createProduction') {
+    return createProduction(payload.product_id, payload.qty, payload.note);
+  }
+
+  if (action === 'createSale') {
+    return createSale(payload);
+  }
+
+  if (action === 'createExpense') {
+    return createExpense(payload);
+  }
+
+  throw new Error('ไม่รู้จัก action: ' + action);
+}
+
+function parseApiPayload_(params, e) {
+  if (params.payload) {
+    return JSON.parse(params.payload);
+  }
+
+  if (e && e.postData && e.postData.contents) {
+    return JSON.parse(e.postData.contents);
+  }
+
+  return {};
+}
+
+function createApiOutput_(data, callback) {
+  var json = JSON.stringify(data);
+
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + '(' + json + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
+  return ContentService
+    .createTextOutput(json)
+    .setMimeType(ContentService.MimeType.JSON);
 }
