@@ -1,25 +1,35 @@
 {
   "productionRules": [
     {
+      "productId": "FG-MEATBALL-LARGE",
       "product": "ลูกชิ้นสูตรใหญ่",
+      "outputUnit": "ชุด",
       "deduct": [
-        {"ingredient":"แป้ง","amount":3.5,"unit":"kg"},
-        {"ingredient":"ผงฟู","amount":0.3,"unit":"kg"},
-        {"ingredient":"กันบูด","amount":0.2,"unit":"kg"},
-        {"ingredient":"กลูเตน","amount":0.3,"unit":"kg"},
-        {"ingredient":"ผงปรุงรสหมู","amount":0.25,"unit":"kg"},
-        {"ingredient":"หัวชูรส","amount":0.15,"unit":"kg"},
-        {"ingredient":"เกลือ","amount":0.2,"unit":"kg"}
+        { "ingredientId": "RM-FLOUR", "ingredient": "แป้ง", "amount": 3.5, "unit": "kg" },
+        { "ingredientId": "RM-BAKING-POWDER", "ingredient": "ผงฟู", "amount": 0.3, "unit": "kg" },
+        { "ingredientId": "RM-PRESERVATIVE", "ingredient": "กันบูด", "amount": 0.2, "unit": "kg" },
+        { "ingredientId": "RM-GLUTEN", "ingredient": "กลูเตน", "amount": 0.3, "unit": "kg" },
+        { "ingredientId": "RM-PORK-SEASONING", "ingredient": "ผงปรุงรสหมู", "amount": 0.25, "unit": "kg" },
+        { "ingredientId": "RM-MSG", "ingredient": "หัวชูรส", "amount": 0.15, "unit": "kg" },
+        { "ingredientId": "RM-WHITE-PEPPER", "ingredient": "พริกไทยขาว", "amount": 3, "unit": "tbsp" },
+        { "ingredientId": "RM-BLACK-PEPPER", "ingredient": "พริกไทยดำ", "amount": 1, "unit": "tbsp" },
+        { "ingredientId": "RM-SALT", "ingredient": "เกลือ", "amount": 0.2, "unit": "kg" }
       ]
     },
     {
+      "productId": "FG-MOOYOR-MAIN",
       "product": "หมูยอสูตรหลัก",
+      "outputUnit": "ชุด",
       "deduct": [
-        {"ingredient":"แป้งโม","amount":2.5,"unit":"kg"},
-        {"ingredient":"ผงมิกซ์","amount":0.3,"unit":"kg"},
-        {"ingredient":"กันบูด","amount":0.2,"unit":"kg"},
-        {"ingredient":"น้ำตาลทราย","amount":0.3,"unit":"kg"},
-        {"ingredient":"กลูเตน","amount":0.3,"unit":"kg"}
+        { "ingredientId": "RM-MODIFIED-STARCH", "ingredient": "แป้งโม", "amount": 2.5, "unit": "kg" },
+        { "ingredientId": "RM-MIX-POWDER", "ingredient": "ผงมิกซ์", "amount": 0.3, "unit": "kg" },
+        { "ingredientId": "RM-PRESERVATIVE", "ingredient": "กันบูด", "amount": 0.2, "unit": "kg" },
+        { "ingredientId": "RM-SUGAR", "ingredient": "น้ำตาลทราย", "amount": 0.3, "unit": "kg" },
+        { "ingredientId": "RM-GLUTEN", "ingredient": "กลูเตน", "amount": 0.3, "unit": "kg" },
+        { "ingredientId": "RM-PORK-SEASONING", "ingredient": "ผงปรุงรสหมู", "amount": 0.2, "unit": "kg" },
+        { "ingredientId": "RM-MSG", "ingredient": "หัวชูรส", "amount": 0.1, "unit": "kg" },
+        { "ingredientId": "RM-WHITE-PEPPER", "ingredient": "พริกไทยขาว", "amount": 1, "unit": "tbsp" },
+        { "ingredientId": "RM-BLACK-PEPPER", "ingredient": "พริกไทยดำ", "amount": 3, "unit": "tbsp" }
       ]
     }
   ]

@@ -1,16 +1,168 @@
-function createStockMovement(payload) {
+function receiveStock(payload) {
+  return withDbLock_(function () {
+    ensureDatabaseReady_();
 
-  const movement = {
-    movement_id: 'MOV-' + new Date().getTime(),
+    var item = findInventoryItem_(payload.item_id || payload.item_name);
+    var qty = requirePositiveNumber_(payload.qty, 'จำนวนรับเข้า');
+    var unitCost = toNumber_(payload.unit_cost);
+    var movement = createStockMovement_({
+      type: 'RECEIVE',
+      item_id: item.item_id,
+      qty: qty,
+      ref_type: 'RECEIVE',
+      ref_id: payload.ref_id || '',
+      note: buildReceiveNote_(payload),
+      user: getCurrentUser_()
+    });
+
+    var expense = null;
+    if (unitCost > 0) {
+      expense = createExpense_({
+        category: 'ซื้อวัตถุดิบ/สินค้า',
+        description: 'รับเข้า ' + item.item_name + ' ' + qty + ' ' + item.unit,
+        amount: roundQty_(qty * unitCost),
+        note: payload.supplier ? 'ผู้ขาย: ' + payload.supplier : '',
+        ref_type: 'STOCK_MOVEMENT',
+        ref_id: movement.movement_id
+      });
+    }
+
+    return {
+      ok: true,
+      movement: movement,
+      expense: expense,
+      inventory: getInventory()
+    };
+  });
+}
+
+function createStockMovement(payload) {
+  return withDbLock_(function () {
+    ensureDatabaseReady_();
+    return createStockMovement_(payload);
+  });
+}
+
+function createStockMovement_(payload) {
+  var item = findInventoryItem_(payload.item_id || payload.item_name);
+  var qty = roundQty_(toNumber_(payload.qty));
+
+  if (qty === 0) {
+    throw new Error('จำนวนเคลื่อนไหวสต๊อกต้องไม่เป็น 0');
+  }
+
+  var currentQty = roundQty_(toNumber_(item.on_hand));
+  var nextQty = roundQty_(currentQty + qty);
+
+  if (nextQty < 0 && payload.allow_negative !== true) {
+    throw new Error('สต๊อกไม่พอ: ' + item.item_name + ' มี ' + currentQty + ' ' + item.unit + ' ต้องใช้ ' + Math.abs(qty) + ' ' + item.unit);
+  }
+
+  updateInventoryBalance_(item.item_id, nextQty);
+
+  var movement = {
+    movement_id: payload.movement_id || makeId_('MOV'),
     datetime: new Date(),
-    type: payload.type,
-    item_id: payload.item_id,
-    item_name: payload.item_name,
-    qty: Number(payload.qty),
-    unit: payload.unit
+    type: payload.type || 'ADJUSTMENT',
+    item_id: item.item_id,
+    item_name: item.item_name,
+    qty: qty,
+    unit: item.unit,
+    balance_after: nextQty,
+    ref_type: payload.ref_type || '',
+    ref_id: payload.ref_id || '',
+    note: payload.note || '',
+    user: payload.user || getCurrentUser_()
   };
 
-  Logger.log(movement);
+  appendObject_(MEEHENG_SHEETS.STOCK_MOVEMENTS, movement);
+  return formatRowsForClient_([movement])[0];
+}
 
-  return movement;
+function getInventory() {
+  ensureDatabaseReady_();
+
+  return formatRowsForClient_(readObjects_(MEEHENG_SHEETS.INVENTORY).map(function (item) {
+    var onHand = roundQty_(item.on_hand);
+    var reorderLevel = roundQty_(item.reorder_level);
+    var status = 'ok';
+
+    if (onHand <= 0) {
+      status = 'out';
+    } else if (reorderLevel > 0 && onHand <= reorderLevel) {
+      status = 'low';
+    }
+
+    return {
+      item_id: item.item_id,
+      item_name: item.item_name,
+      item_type: item.item_type,
+      category: item.category,
+      unit: item.unit,
+      on_hand: onHand,
+      reorder_level: reorderLevel,
+      active: item.active,
+      status: status,
+      updated_at: item.updated_at
+    };
+  }));
+}
+
+function getRecentStockMovements(limit) {
+  ensureDatabaseReady_();
+
+  var rows = readObjects_(MEEHENG_SHEETS.STOCK_MOVEMENTS);
+  var rowLimit = limit || 20;
+  return formatRowsForClient_(rows.slice(Math.max(rows.length - rowLimit, 0)).reverse());
+}
+
+function findInventoryItem_(idOrName) {
+  var lookup = normalizeText_(idOrName);
+
+  if (!lookup) {
+    throw new Error('กรุณาเลือกรายการสต๊อก');
+  }
+
+  var rows = readObjects_(MEEHENG_SHEETS.INVENTORY);
+
+  for (var index = 0; index < rows.length; index += 1) {
+    if (rows[index].item_id === lookup || rows[index].item_name === lookup) {
+      return rows[index];
+    }
+  }
+
+  throw new Error('ไม่พบรายการสต๊อก: ' + lookup);
+}
+
+function updateInventoryBalance_(itemId, nextQty) {
+  var sheet = getSheet_(MEEHENG_SHEETS.INVENTORY);
+  var rows = readObjects_(MEEHENG_SHEETS.INVENTORY);
+
+  for (var index = 0; index < rows.length; index += 1) {
+    if (rows[index].item_id === itemId) {
+      sheet.getRange(rows[index]._rowNumber, 6).setValue(nextQty);
+      sheet.getRange(rows[index]._rowNumber, 9).setValue(new Date());
+      return;
+    }
+  }
+
+  throw new Error('ไม่พบแถวสต๊อกสำหรับ ' + itemId);
+}
+
+function buildReceiveNote_(payload) {
+  var parts = [];
+
+  if (payload.supplier) {
+    parts.push('ผู้ขาย: ' + payload.supplier);
+  }
+
+  if (toNumber_(payload.unit_cost) > 0) {
+    parts.push('ต้นทุน/หน่วย: ' + payload.unit_cost);
+  }
+
+  if (payload.note) {
+    parts.push(payload.note);
+  }
+
+  return parts.join(' | ');
 }

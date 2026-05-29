@@ -1,19 +1,26 @@
 # Meeheng ERP Roadmap
 
-## Phase 1
-- Inventory
-- Recipes
-- Production
+## พร้อมใช้แล้ว
 
-## Phase 2
-- Vendor Sales
-- Sales Dashboard
+- Inventory master และยอดคงเหลือ
+- สูตรผลิตลูกชิ้นและหมูยอ
+- รับวัตถุดิบเข้า
+- ผลิตสินค้าและตัดสต๊อกอัตโนมัติ
+- บันทึกขายและตัดสินค้าสำเร็จรูป
+- บันทึกค่าใช้จ่าย
+- Dashboard รายวัน/รายเดือน
 
-## Phase 3
-- Accounting
-- Reports
+## ถัดไป
 
-## Phase 4
-- Analytics
-- Forecast
-- AI Assistant
+- เพิ่มสูตรย่อยหรือขนาดสินค้าเพิ่มเติม
+- เพิ่ม conversion หน่วย เช่น kg เป็น tbsp
+- เพิ่มต้นทุนเฉลี่ยต่อสินค้า
+- เพิ่ม Vendor Stock สำหรับแม่ค้าแต่ละคน
+- เพิ่มรายงาน PDF/Excel รายวัน
+- เพิ่มสิทธิ์ผู้ใช้ตามบทบาท
+
+## ระยะยาว
+
+- Forecast วัตถุดิบ
+- Analytics ยอดขายรายช่องทาง
+- AI Assistant สำหรับถามยอดขายและสต๊อก

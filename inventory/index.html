@@ -1,1 +1,68 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meeheng Inventory</title><style>body{margin:0;background:#f7f1e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3f2a20}header{padding:32px 24px;background:#0b8d4d;color:#fffaf4;border-bottom-left-radius:32px;border-bottom-right-radius:32px}header h1{margin:0;font-size:40px}header p{margin-top:10px}.wrap{max-width:1100px;margin:auto;padding:22px}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:-40px}.summary-card{background:#fffaf4;border-radius:24px;padding:22px;box-shadow:0 10px 30px rgba(93,32,24,.08)}.summary-card h3{margin:0;color:#8f6e5d;font-size:16px}.summary-card .value{font-size:36px;font-weight:800;margin-top:12px;color:#0b8d4d}.section-title{font-size:28px;font-weight:800;margin:30px 0 16px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.card{background:#fffaf4;border-radius:24px;padding:22px;box-shadow:0 10px 30px rgba(93,32,24,.08)}.stock{font-size:34px;font-weight:900;color:#0b8d4d;margin-top:12px}.low{color:#d97706}.danger{color:#c1121f}.tag{display:inline-block;margin-top:12px;padding:8px 12px;border-radius:999px;background:#e7f7ef;color:#0b8d4d;font-weight:700;font-size:13px}.topbar{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}.btn{background:#fffaf4;color:#3f2a20;text-decoration:none;padding:14px 18px;border-radius:18px;font-weight:700;box-shadow:0 10px 20px rgba(0,0,0,.06)}.update-box{margin-top:30px;background:#fffaf4;border-radius:24px;padding:24px;box-shadow:0 10px 30px rgba(93,32,24,.08)}select,input{width:100%;box-sizing:border-box;padding:14px;border-radius:14px;border:1px solid #ead2ba;margin-top:10px}.form-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}.save{margin-top:18px;width:100%;padding:16px;border:0;border-radius:18px;background:#17b169;color:#fff;font-size:16px;font-weight:800}</style></head><body><header><h1>📦 Inventory Center</h1><p>Raw Material & Factory Stock</p></header><main class="wrap"><section class="summary"><div class="summary-card"><h3>วัตถุดิบทั้งหมด</h3><div class="value">13</div></div><div class="summary-card"><h3>ใกล้หมด</h3><div class="value low">2</div></div><div class="summary-card"><h3>มูลค่าสต๊อก</h3><div class="value">฿0</div></div><div class="summary-card"><h3>อัปเดตล่าสุด</h3><div class="value">Today</div></div></section><div class="topbar"><a class="btn" href="/meeheng-erp/">← กลับหน้าเมนู</a><a class="btn" href="/meeheng-erp/recipes/">🧪 สูตรผลิต</a></div><div class="section-title">🥩 วัตถุดิบหลัก</div><section class="grid"><div class="card"><h3>แป้ง</h3><div class="stock">0 KG</div><div class="tag">ใช้ในลูกชิ้น / หมูยอ</div></div><div class="card"><h3>กลูเตน</h3><div class="stock">0 KG</div><div class="tag">วัตถุดิบสูตรผลิต</div></div><div class="card"><h3>แป้งโม</h3><div class="stock low">0 KG</div><div class="tag">สูตรหมูยอ</div></div></section><div class="section-title">🧂 เครื่องปรุง</div><section class="grid"><div class="card"><h3>ผงฟู</h3><div class="stock">0 KG</div></div><div class="card"><h3>หัวชูรส</h3><div class="stock">0 KG</div></div><div class="card"><h3>พริกไทยขาว</h3><div class="stock danger">0 KG</div></div></section><section class="update-box"><h2>อัปเดตสต๊อก</h2><div class="form-grid"><select><option>แป้ง</option><option>กลูเตน</option><option>หัวชูรส</option><option>พริกไทยขาว</option></select><input placeholder="จำนวนคงเหลือ"><input placeholder="หน่วย"></div><button class="save">บันทึกสต๊อก</button></section></main></body></html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeheng Inventory</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f6f8; color: #111827; font-family: Arial, "Noto Sans Thai", sans-serif; }
+    header { background: #101827; color: #fff; padding: 18px; }
+    main, .inner { max-width: 1100px; margin: 0 auto; }
+    main { padding: 16px; }
+    h1 { font-size: 24px; margin: 0; }
+    a { color: #2563eb; font-weight: 700; text-decoration: none; }
+    .toolbar { align-items: center; display: flex; gap: 10px; justify-content: space-between; margin-bottom: 12px; }
+    input { border: 1px solid #cbd5e1; border-radius: 8px; min-height: 40px; padding: 8px 10px; width: min(360px, 100%); }
+    .table-wrap { background: #fff; border: 1px solid #d9e0e8; border-radius: 8px; overflow: auto; }
+    table { border-collapse: collapse; min-width: 720px; width: 100%; }
+    th, td { border-bottom: 1px solid #d9e0e8; padding: 10px; text-align: left; }
+    th { background: #f8fafc; color: #334155; font-size: 13px; }
+    .number { text-align: right; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>Inventory Master</h1>
+    </div>
+  </header>
+  <main>
+    <div class="toolbar">
+      <a href="../">กลับหน้าแรก</a>
+      <input id="search" placeholder="ค้นหารายการ">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>รายการ</th><th>หมวด</th><th>หน่วย</th><th class="number">คงเหลือตั้งต้น</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    const rows = document.getElementById('rows');
+    const search = document.getElementById('search');
+
+    function render() {
+      const query = search.value.trim().toLowerCase();
+      rows.innerHTML = ingredients
+        .filter((item) => !query || `${item.name} ${item.category}`.toLowerCase().includes(query))
+        .map((item) => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.unit}</td>
+            <td class="number">${item.qty}</td>
+          </tr>
+        `)
+        .join('');
+    }
+
+    search.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

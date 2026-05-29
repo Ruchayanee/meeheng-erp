@@ -1,1 +1,56 @@
-<!doctype html><html lang='th'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Meeheng Food</title><meta name='theme-color' content='#8f1111'><meta name='apple-mobile-web-app-capable' content='yes'><meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'><meta name='apple-mobile-web-app-title' content='Meeheng ERP'><link rel='apple-touch-icon' href='https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png'><link rel='icon' type='image/png' href='https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png'><style>body{margin:0;background:#f3f0ea;font-family:-apple-system,BlinkMacSystemFont,sans-serif}.wrap{max-width:760px;margin:auto;padding:24px}.bell{text-align:right;font-size:28px;padding-top:8px}.center{text-align:center;margin-top:30px}.logo{width:220px;height:220px;object-fit:contain;filter:drop-shadow(0 10px 25px rgba(0,0,0,.12))}h1{font-size:52px;color:#971818;margin:18px 0 8px;font-weight:900}p{margin:0;color:#777;font-size:20px;font-weight:700}.menu{display:grid;gap:22px;margin-top:44px}.btn{border:0;border-radius:30px;padding:28px;color:#fff;font-size:30px;font-weight:900;text-align:left;box-shadow:0 10px 25px rgba(0,0,0,.12)}.btn small{display:block;font-size:15px;opacity:.92;margin-top:8px}.a{background:linear-gradient(135deg,#a31212,#d62828)}.b{background:linear-gradient(135deg,#0b8d4d,#17b169)}.c{background:linear-gradient(135deg,#d48b00,#ffb703)}</style></head><body><div class='wrap'><div class='bell'>🔔</div><div class='center'><img class='logo' src='https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png'><h1>Mee Heng Food</h1><p>Super App Management System</p></div><div class='menu'><button class='btn a' onclick="window.location.href='/meeheng-erp/accounting/'">📊 ระบบบัญชี<small>รายรับ รายจ่าย กำไร และยอดขายรวม</small></button><button class='btn b' onclick="window.location.href='/meeheng-erp/inventory/'">📦 ระบบสต๊อก<small>ตรวจสอบวัตถุดิบและปรับสต๊อก</small></button><button class='btn c' onclick="window.open('/meeheng-erp/vendor-app/')">🧾 ระบบแม่ค้า<small>บันทึกยอดขายผ่าน Vendor App</small></button></div></div></body></html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeheng ERP</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f6f8; color: #111827; font-family: Arial, "Noto Sans Thai", sans-serif; }
+    header { background: #101827; color: #fff; padding: 28px 18px; }
+    main, .inner { max-width: 1100px; margin: 0 auto; }
+    h1 { margin: 0 0 6px; font-size: 30px; }
+    p { color: #64748b; line-height: 1.6; }
+    header p { color: #cbd5e1; margin: 0; }
+    main { padding: 18px; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card { background: #fff; border: 1px solid #d9e0e8; border-radius: 8px; padding: 16px; }
+    .card h2 { font-size: 18px; margin: 0 0 8px; }
+    a { color: #2563eb; font-weight: 700; text-decoration: none; }
+    .badge { background: #dcfce7; border-radius: 999px; color: #166534; display: inline-block; font-weight: 700; margin-bottom: 14px; padding: 6px 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>Meeheng ERP</h1>
+      <p>ระบบ ERP สำหรับโรงงานมีเฮงฟู้ด</p>
+    </div>
+  </header>
+  <main>
+    <span class="badge">Apps Script + Google Sheets</span>
+    <div class="grid">
+      <section class="card">
+        <h2>ระบบหลัก</h2>
+        <p>ใช้งานจริงผ่าน Google Apps Script Web app พร้อมรับเข้า ผลิต ขาย บัญชี และ Dashboard</p>
+        <a href="docs/apps-script-deploy.md">วิธี Deploy</a>
+      </section>
+      <section class="card">
+        <h2>Inventory</h2>
+        <p>ดูรายการวัตถุดิบ เครื่องปรุง บรรจุภัณฑ์ และอุปกรณ์โรงงานที่ seed เข้า ERP</p>
+        <a href="inventory/">เปิด Inventory</a>
+      </section>
+      <section class="card">
+        <h2>Recipes</h2>
+        <p>ตรวจสูตรลูกชิ้นและหมูยอที่ใช้สำหรับตัดสต๊อกตอนผลิต</p>
+        <a href="recipes/">เปิด Recipes</a>
+      </section>
+      <section class="card">
+        <h2>Vendor App</h2>
+        <p>หน้าเตรียมสำหรับงานแม่ค้าและยอดขายปลายทาง</p>
+        <a href="vendor-app/">เปิด Vendor App</a>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

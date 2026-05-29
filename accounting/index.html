@@ -1,1 +1,57 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Meeheng Accounting</title><link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>body{font-family:'Kanit',sans-serif;background:#f8f5f2;display:flex;flex-direction:column;align-items:center;min-height:100vh;margin:0;text-align:center;padding:20px;color:#2b2b2b}.topbar{width:100%;max-width:1100px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.back-btn{text-decoration:none;background:#1e293b;color:#fff;padding:12px 18px;border-radius:16px;font-size:16px;font-weight:600}.notify{font-size:30px}.logo{width:240px;max-width:80vw;object-fit:contain;margin-top:12px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.1))}.subtitle{color:#777;font-size:22px;margin-top:10px;margin-bottom:28px;letter-spacing:.5px;font-weight:600}.grid{width:100%;max-width:1100px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:16px}.card{background:#fff;border-radius:24px;padding:24px;box-shadow:0 10px 20px rgba(0,0,0,.08);text-align:left}.card h3{margin:0;font-size:22px}.value{font-size:42px;font-weight:800;margin-top:12px}.red{background:linear-gradient(135deg,#a31212,#d62828);color:#fff}.yellow{background:linear-gradient(135deg,#d48b00,#ffb703);color:#fff}.green{background:linear-gradient(135deg,#0b8d4d,#17b169);color:#fff}.dark{background:#1e293b;color:#fff}.section{width:100%;max-width:1100px;margin-top:24px}.list{background:#fff;border-radius:22px;padding:20px;box-shadow:0 10px 20px rgba(0,0,0,.08)}.item{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #eee}.item:last-child{border-bottom:none}.charts{width:100%;max-width:1100px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:24px}.chart-card{background:#fff;border-radius:24px;padding:24px;box-shadow:0 10px 20px rgba(0,0,0,.08)}canvas{max-height:320px}.expense-box{background:#fff;border-radius:24px;padding:24px;box-shadow:0 10px 20px rgba(0,0,0,.08);text-align:left}.expense-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}input,select{padding:14px;border-radius:14px;border:1px solid #ddd;font-family:'Kanit',sans-serif;font-size:15px}.submit-btn{background:linear-gradient(135deg,#a31212,#d62828);color:#fff;border:none;padding:16px;border-radius:16px;font-size:16px;font-weight:700;cursor:pointer}</style></head><body><div class="topbar"><a class="back-btn" href="/meeheng-erp/">← กลับหน้าเมนู</a><div class="notify">🔔</div></div><img class="logo" src="https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png"><div class="subtitle">Accounting & Sales Dashboard</div><div class="grid"><div class="card red"><h3>ยอดขายวันนี้</h3><div class="value">฿ 0</div></div><div class="card green"><h3>กำไรวันนี้</h3><div class="value">฿ 0</div></div><div class="card yellow"><h3>รายจ่ายวันนี้</h3><div class="value">฿ 0</div></div><div class="card dark"><h3>Vendor Online</h3><div class="value">4</div></div></div><div class="charts"><div class="chart-card"><h3>สัดส่วนยอดขายสินค้า</h3><canvas id="pieChart"></canvas></div><div class="chart-card"><h3>ยอดขายแม่ค้าแต่ละคน</h3><canvas id="barChart"></canvas></div></div><div class="section"><div class="expense-box"><h2>เพิ่มค่าใช้จ่าย</h2><p>สำหรับผู้บริหารและฝ่ายบัญชี</p><div class="expense-grid"><select><option>ค่าแก๊ส</option><option>ค่าน้ำมัน</option><option>ค่าแผง</option><option>ค่าแรง</option><option>อื่นๆ</option></select><input type="number" placeholder="จำนวนเงิน"><input type="text" placeholder="รายละเอียดเพิ่มเติม"><button class="submit-btn">บันทึกค่าใช้จ่าย</button></div></div></div><div class="section"><div class="list"><div class="item"><strong>ตุ่ย</strong><span>฿ 0</span></div><div class="item"><strong>ยุ</strong><span>฿ 0</span></div><div class="item"><strong>แบน</strong><span>฿ 0</span></div><div class="item"><strong>มิ</strong><span>฿ 0</span></div></div></div><script>new Chart(document.getElementById('pieChart'),{type:'pie',data:{labels:['ลูกชิ้นแพ็คซีน','ลูกชิ้นถุงมัด','หมูยอ'],datasets:[{data:[40,35,25],backgroundColor:['#d62828','#ffb703','#17b169']}]},options:{plugins:{legend:{position:'bottom'}}}});new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:['ตุ่ย','ยุ','แบน','มิ'],datasets:[{label:'ยอดขาย',data:[1200,900,1400,700],backgroundColor:['#d62828','#ffb703','#17b169','#1e293b'],borderRadius:12}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});</script></body></html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeheng Accounting</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f6f8; color: #111827; font-family: Arial, "Noto Sans Thai", sans-serif; }
+    header { background: #101827; color: #fff; padding: 18px; }
+    main { max-width: 860px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 24px; margin: 0; }
+    .card { background: #fff; border: 1px solid #d9e0e8; border-radius: 8px; margin-bottom: 12px; padding: 14px; }
+    form { display: grid; gap: 12px; }
+    label { color: #334155; display: grid; font-size: 13px; font-weight: 700; gap: 6px; }
+    input, select { border: 1px solid #cbd5e1; border-radius: 8px; min-height: 42px; padding: 9px 10px; width: 100%; }
+    button { background: #15803d; border: 0; border-radius: 8px; color: #fff; cursor: pointer; font: inherit; font-weight: 700; min-height: 42px; padding: 10px 14px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #d9e0e8; padding: 8px; text-align: left; }
+    .number { text-align: right; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Accounting Draft</h1>
+  </header>
+  <main>
+    <section class="card">
+      <form id="expenseForm">
+        <label>หมวด
+          <select name="category">
+            <option>ค่าแก๊ส</option>
+            <option>ค่าแผง</option>
+            <option>ค่าแรง</option>
+            <option>ค่าขนส่ง</option>
+            <option>ทั่วไป</option>
+          </select>
+        </label>
+        <label>รายละเอียด
+          <input name="description" required>
+        </label>
+        <label>ยอดเงิน
+          <input name="amount" type="number" min="0.01" step="0.01" required>
+        </label>
+        <button id="saveExpenseBtn" type="submit">บันทึกในเครื่องนี้</button>
+      </form>
+    </section>
+    <section class="card">
+      <table>
+        <thead><tr><th>เวลา</th><th>หมวด</th><th>รายละเอียด</th><th class="number">ยอดเงิน</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

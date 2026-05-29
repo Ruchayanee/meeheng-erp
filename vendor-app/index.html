@@ -1,1 +1,142 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meeheng Vendor</title><style>body{font-family:'Arial Rounded MT Bold',Arial,sans-serif;margin:0;background:#fff4df;color:#3b1f17}header{background:#a52222;color:#fff4df;padding:24px;border-bottom:6px solid #f2c98b}.wrap{max-width:720px;margin:auto;padding:18px}.card{background:#fffaf0;border-radius:22px;padding:22px;margin:16px 0;box-shadow:0 2px 10px #0001;border:1px solid #f1d3a2}button{width:100%;padding:22px;margin:8px 0;border:0;border-radius:18px;background:#b42828;color:#fff9ed;font-size:22px;font-weight:bold}select{width:100%;padding:16px;border-radius:16px;border:1px solid #e7c28c;background:#fffdf8;font-size:16px;margin-top:10px}.muted{color:#8a6454}.stat{font-size:34px;font-weight:bold;color:#a52222}.ok{color:green}.err{color:#a52222}</style></head><body><header><h1>Meeheng Vendor App</h1><p>ระบบบันทึกยอดขายแม่ค้า</p></header><div class="wrap"><div class="card"><h2>เลือกแม่ค้า</h2><select id="vendor"><option>ตุ่ย</option><option>ยุ</option><option>แบน</option><option>มิ</option></select><p class="muted" style="margin-top:12px">ในอนาคตจะเชื่อมต่อกับ LINE LIFF และ Line Official Account</p></div><div class="card"><h2>ยอดขายที่กดในหน้านี้</h2><div class="stat" id="total">THB 0</div></div><div class="card"><h2>กดบันทึกยอดขาย</h2><button onclick="sale('ลูกชิ้นเล็ก',35)">+1 ลูกชิ้นเล็ก</button><button onclick="sale('ลูกชิ้นใหญ่',45)">+1 ลูกชิ้นใหญ่</button><button onclick="sale('หมูยอ',50)">+1 หมูยอ</button></div><div class="card"><h2>สถานะล่าสุด</h2><p id="log" class="muted">ยังไม่มีรายการ</p></div></div><script>const API='https://script.google.com/macros/s/AKfycbx1eFGVN_Qfh-1yqjTHLcyfeC0kJ1YQ7CF8eKRiqyOoga033e11NTy89ogK6ZsMPltB/exec';let total=0;function sale(product,price){const vendor=document.getElementById('vendor').value;total+=price;document.getElementById('total').innerText='THB '+total;document.getElementById('log').innerText='กำลังบันทึก...';fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({vendor:vendor,product:product,qty:1,price:price})}).then(function(){document.getElementById('log').className='ok';document.getElementById('log').innerText='บันทึกแล้ว: '+vendor+' / '+product+' / THB '+price+' / '+new Date().toLocaleTimeString();}).catch(function(){document.getElementById('log').className='err';document.getElementById('log').innerText='บันทึกไม่สำเร็จ กรุณาลองใหม่';});}</script></body></html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeheng Vendor App</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f6f8; color: #111827; font-family: Arial, "Noto Sans Thai", sans-serif; }
+    header { background: #101827; color: #fff; padding: 18px; }
+    main { max-width: 760px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 24px; margin: 0; }
+    .card { background: #fff; border: 1px solid #d9e0e8; border-radius: 8px; margin-bottom: 12px; padding: 14px; }
+    form { display: grid; gap: 12px; }
+    label { color: #334155; display: grid; font-size: 13px; font-weight: 700; gap: 6px; }
+    input, select { border: 1px solid #cbd5e1; border-radius: 8px; min-height: 42px; padding: 9px 10px; width: 100%; }
+    button { border: 0; border-radius: 8px; cursor: pointer; font: inherit; font-weight: 700; min-height: 42px; padding: 10px 14px; }
+    .primary { background: #2563eb; color: #fff; }
+    .light { background: #e2e8f0; color: #111827; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #d9e0e8; padding: 8px; text-align: left; }
+    .number { text-align: right; }
+    .actions { display: flex; gap: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Meeheng Vendor App</h1>
+  </header>
+  <main>
+    <section class="card">
+      <form id="saleForm">
+        <label>ชื่อแม่ค้า/ช่องทาง
+          <input name="vendor" value="หน้าร้าน" required>
+        </label>
+        <label>สินค้า
+          <select name="product" required>
+            <option>ลูกชิ้นสูตรใหญ่</option>
+            <option>หมูยอสูตรหลัก</option>
+          </select>
+        </label>
+        <label>จำนวน
+          <input name="qty" type="number" min="0.000001" step="0.000001" required>
+        </label>
+        <label>ราคาต่อหน่วย
+          <input name="price" type="number" min="0.01" step="0.01" required>
+        </label>
+        <button class="primary" type="submit">บันทึกในเครื่องนี้</button>
+      </form>
+    </section>
+    <section class="card">
+      <div class="actions">
+        <button class="light" id="exportBtn" type="button">Export CSV</button>
+        <button class="light" id="clearBtn" type="button">ล้างรายการ</button>
+      </div>
+    </section>
+    <section class="card">
+      <table>
+        <thead>
+          <tr><th>เวลา</th><th>ช่องทาง</th><th>สินค้า</th><th class="number">จำนวน</th><th class="number">รวม</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+  </main>
+  <script>
+    const key = 'meeheng_vendor_sales';
+    const form = document.getElementById('saleForm');
+    const rows = document.getElementById('rows');
+
+    function readRows() {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    }
+
+    function writeRows(value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function render() {
+      const data = readRows();
+      rows.innerHTML = data.length ? data.map((row) => `
+        <tr>
+          <td>${escapeHtml(row.datetime)}</td>
+          <td>${escapeHtml(row.vendor)}</td>
+          <td>${escapeHtml(row.product)}</td>
+          <td class="number">${row.qty}</td>
+          <td class="number">${Number(row.total).toFixed(2)}</td>
+        </tr>
+      `).join('') : '<tr><td colspan="5">ยังไม่มีรายการ</td></tr>';
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const qty = Number(formData.get('qty'));
+      const price = Number(formData.get('price'));
+      const data = readRows();
+      data.push({
+        datetime: new Date().toLocaleString('th-TH'),
+        vendor: formData.get('vendor'),
+        product: formData.get('product'),
+        qty,
+        price,
+        total: qty * price
+      });
+      writeRows(data);
+      form.reset();
+      form.elements.vendor.value = 'หน้าร้าน';
+      render();
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      writeRows([]);
+      render();
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const csv = ['datetime,vendor,product,qty,price,total']
+        .concat(readRows().map((row) => [row.datetime, row.vendor, row.product, row.qty, row.price, row.total].join(',')))
+        .join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'meeheng-vendor-sales.csv';
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    function escapeHtml(value) {
+      return String(value === undefined || value === null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    render();
+  </script>
+</body>
+</html>
