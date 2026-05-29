@@ -31,6 +31,9 @@
 
 ## ใช้งานครั้งแรก
 
+Web app ที่ deploy แล้ว:
+https://script.google.com/macros/s/AKfycbwptw33KUebRlZiwONLAHXaAxcCXF75LDTn577ysZm7CXZoYlzJywKjEuX_vDD2QLV7eA/exec
+
 1. เปิด Google Apps Script project ใหม่ หรือ project ที่ผูกกับ Google Sheets
 2. คัดลอกไฟล์ทั้งหมดใน `apps-script/` เข้า Apps Script project
 3. รันฟังก์ชัน `setupDatabase` หนึ่งครั้งเพื่อสร้าง sheet และ seed ข้อมูลตั้งต้น

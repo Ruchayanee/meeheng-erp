@@ -44,6 +44,12 @@
 6. กด Deploy
 7. เปิด Web app URL
 
+## Deployment ล่าสุด
+
+- Apps Script project: https://script.google.com/d/169i03_Ix8bd9QP1lWCXqu0atagWnhLH89qWjFua2O5MkaOX_ZVGHO5Kf/edit
+- Web app: https://script.google.com/macros/s/AKfycbwptw33KUebRlZiwONLAHXaAxcCXF75LDTn577ysZm7CXZoYlzJywKjEuX_vDD2QLV7eA/exec
+- Access: anyone with Google sign-in
+
 ## การใช้งานประจำวัน
 
 - แท็บ `รับเข้า`: เพิ่มวัตถุดิบ ของแพ็ค หรืออุปกรณ์โรงงาน
