@@ -129,7 +129,7 @@ function getDb_() {
   var properties = PropertiesService.getScriptProperties();
   var spreadsheetId = properties.getProperty('MEEHENG_SPREADSHEET_ID');
 
-  if (!spreadsheetId && MEEHENG_DEFAULT_SPREADSHEET_ID) {
+  if (MEEHENG_DEFAULT_SPREADSHEET_ID && spreadsheetId !== MEEHENG_DEFAULT_SPREADSHEET_ID) {
     spreadsheetId = MEEHENG_DEFAULT_SPREADSHEET_ID;
     properties.setProperty('MEEHENG_SPREADSHEET_ID', spreadsheetId);
   }
