@@ -137,8 +137,16 @@ function runApiAction_(params, e) {
     return receiveStock(payload);
   }
 
+  if (action === 'updateInventoryItem') {
+    return updateInventoryItem(payload);
+  }
+
   if (action === 'createProduction') {
     return createProduction(payload.product_id, payload.qty, payload.note);
+  }
+
+  if (action === 'updateRecipeItem') {
+    return updateRecipeItem(payload);
   }
 
   if (action === 'createSale') {
@@ -147,6 +155,10 @@ function runApiAction_(params, e) {
 
   if (action === 'createExpense') {
     return createExpense(payload);
+  }
+
+  if (action === 'updateExpense') {
+    return updateExpense(payload);
   }
 
   throw new Error('ไม่รู้จัก action: ' + action);
