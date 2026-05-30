@@ -56,8 +56,9 @@
     .btn-green { background: var(--green); color: #ffffff; }
     .btn-amber { background: var(--amber); color: #2b2b2b; }
     .btn-light { background: #e2e8f0; color: #0f172a; }
+    .btn-small { border-radius: 999px; font-size: 12px; min-height: 32px; padding: 6px 10px; }
     .status { background: #ffffff; border: 1px solid #e4ddd4; border-radius: 999px; color: #971818; font-weight: 800; padding: 8px 12px; }
-    .panel { display: none; }
+    .panel { display: block; margin-bottom: 14px; scroll-margin-top: 12px; }
     .panel.active { display: block; }
     .grid { display: grid; gap: 12px; }
     .kpis { grid-template-columns: repeat(6, minmax(150px, 1fr)); margin-bottom: 12px; }
@@ -70,6 +71,10 @@
     .table-wrap { border: 1px solid var(--line); border-radius: 8px; overflow: auto; }
     .number { text-align: right; white-space: nowrap; }
     .muted { color: var(--muted); }
+    .table-actions { min-width: 84px; text-align: right; }
+    .checkbox-row { align-items: center; display: flex; gap: 8px; min-height: 44px; }
+    .checkbox-row input { min-height: auto; width: auto; }
+    .editor-note { color: var(--muted); font-size: 13px; font-weight: 700; }
     .pill { border-radius: 999px; display: inline-flex; font-size: 12px; font-weight: 700; padding: 4px 8px; }
     .pill.ok { background: #dcfce7; color: #166534; }
     .pill.low { background: #fef3c7; color: #92400e; }
@@ -216,34 +221,88 @@
 
     <section class="panel" id="accounting">
       <div class="grid two-col">
-        <div class="card">
-          <h2>บันทึกค่าใช้จ่าย</h2>
-          <form id="expenseForm">
-            <label>หมวด<select name="category" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
-            <label>รายละเอียด<input name="description" required></label>
-            <label>ยอดเงิน<input name="amount" type="number" min="0.01" step="0.01" required></label>
-            <label>หมายเหตุ<textarea name="note"></textarea></label>
-            <button class="btn-green" type="submit">บันทึกค่าใช้จ่าย</button>
-          </form>
+        <div class="grid">
+          <div class="card">
+            <h2>บันทึกค่าใช้จ่าย</h2>
+            <form id="expenseForm">
+              <label>หมวด<select name="category" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
+              <label>รายละเอียด<input name="description" required></label>
+              <label>ยอดเงิน<input name="amount" type="number" min="0.01" step="0.01" required></label>
+              <label>หมายเหตุ<textarea name="note"></textarea></label>
+              <button class="btn-green" type="submit">บันทึกค่าใช้จ่าย</button>
+            </form>
+          </div>
+          <div class="card">
+            <h2>แก้ไขค่าใช้จ่าย</h2>
+            <form id="expenseEditForm">
+              <label>เลือกรายการ<select name="expense_id" id="expenseEditItem" required></select></label>
+              <label>หมวด<select name="category" id="expenseEditCategory" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
+              <label>รายละเอียด<input name="description" id="expenseEditDescription" required></label>
+              <label>ยอดเงิน<input name="amount" id="expenseEditAmount" type="number" min="0.01" step="0.01" required></label>
+              <label>หมายเหตุ<textarea name="note" id="expenseEditNote"></textarea></label>
+              <button class="btn-amber" type="submit">บันทึกแก้ไข</button>
+            </form>
+          </div>
         </div>
         <div class="card">
           <h2>ค่าใช้จ่ายล่าสุด</h2>
-          <div class="table-wrap"><table><thead><tr><th>เวลา</th><th>หมวด</th><th>รายละเอียด</th><th class="number">ยอดเงิน</th></tr></thead><tbody id="expensesTable"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>เวลา</th><th>หมวด</th><th>รายละเอียด</th><th class="number">ยอดเงิน</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="expensesTable"></tbody></table></div>
         </div>
       </div>
     </section>
 
     <section class="panel" id="inventory">
-      <div class="card">
-        <h2>สต๊อกทั้งหมด</h2>
-        <div class="table-wrap"><table><thead><tr><th>รายการ</th><th>ประเภท</th><th>หมวด</th><th class="number">คงเหลือ</th><th>หน่วย</th><th class="number">ขั้นต่ำ</th><th>สถานะ</th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
+      <div class="grid two-col">
+        <div class="card">
+          <h2>แก้ไขรายการสต๊อก</h2>
+          <form id="inventoryEditForm">
+            <label>เลือกรายการ<select name="item_id" id="inventoryEditItem" required></select></label>
+            <label>ชื่อรายการ<input name="item_name" id="inventoryEditName" required></label>
+            <div class="form-row">
+              <label>ประเภท<input name="item_type" id="inventoryEditType" required></label>
+              <label>หมวด<input name="category" id="inventoryEditCategory" required></label>
+            </div>
+            <div class="form-row">
+              <label>คงเหลือ<input name="on_hand" id="inventoryEditOnHand" type="number" step="0.000001" required></label>
+              <label>หน่วย<input name="unit" id="inventoryEditUnit" required></label>
+            </div>
+            <div class="form-row">
+              <label>ขั้นต่ำ<input name="reorder_level" id="inventoryEditReorder" type="number" min="0" step="0.000001"></label>
+              <label class="checkbox-row"><input name="active" id="inventoryEditActive" type="checkbox" value="true"> ใช้งาน</label>
+            </div>
+            <p class="editor-note">การแก้ยอดคงเหลือจะบันทึกประวัติปรับสต๊อกให้อัตโนมัติ</p>
+            <button class="btn-green" type="submit">บันทึกแก้ไขสต๊อก</button>
+          </form>
+        </div>
+        <div class="card">
+          <h2>สต๊อกทั้งหมด</h2>
+          <div class="table-wrap"><table><thead><tr><th>รายการ</th><th>ประเภท</th><th>หมวด</th><th class="number">คงเหลือ</th><th>หน่วย</th><th class="number">ขั้นต่ำ</th><th>สถานะ</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
+        </div>
       </div>
     </section>
 
     <section class="panel" id="recipes">
-      <div class="card">
-        <h2>สูตรผลิต</h2>
-        <div class="table-wrap"><table><thead><tr><th>สินค้า</th><th>เวอร์ชัน</th><th>วัตถุดิบ</th><th class="number">จำนวนต่อชุด</th><th>หน่วย</th></tr></thead><tbody id="recipeTable"></tbody></table></div>
+      <div class="grid two-col">
+        <div class="card">
+          <h2>แก้ไขสูตรผลิต</h2>
+          <form id="recipeEditForm">
+            <label>เลือกรายการสูตร<select name="recipe_id" id="recipeEditItem" required></select></label>
+            <div class="form-row">
+              <label>สินค้า<input id="recipeEditProduct" readonly></label>
+              <label>วัตถุดิบ<input id="recipeEditIngredient" readonly></label>
+            </div>
+            <div class="form-row">
+              <label>เวอร์ชัน<input name="version" id="recipeEditVersion" required></label>
+              <label>หน่วย<input name="unit" id="recipeEditUnit" required></label>
+            </div>
+            <label>จำนวนต่อชุด<input name="qty_per_batch" id="recipeEditQty" type="number" min="0.000001" step="0.000001" required></label>
+            <button class="btn-amber" type="submit">บันทึกแก้ไขสูตร</button>
+          </form>
+        </div>
+        <div class="card">
+          <h2>สูตรผลิต</h2>
+          <div class="table-wrap"><table><thead><tr><th>สินค้า</th><th>เวอร์ชัน</th><th>วัตถุดิบ</th><th class="number">จำนวนต่อชุด</th><th>หน่วย</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="recipeTable"></tbody></table></div>
+        </div>
       </div>
     </section>
   </main>
@@ -262,18 +321,25 @@
       document.getElementById('receiveItem').addEventListener('change', renderReceiveUnit);
       document.getElementById('productionProduct').addEventListener('change', renderProductionPreview);
       document.getElementById('productionQty').addEventListener('input', renderProductionPreview);
+      document.getElementById('inventoryEditItem').addEventListener('change', populateInventoryEditForm);
+      document.getElementById('recipeEditItem').addEventListener('change', populateRecipeEditForm);
+      document.getElementById('expenseEditItem').addEventListener('change', populateExpenseEditForm);
+      document.addEventListener('click', handleEditClick);
       loadAppData();
     });
 
     function bindTabs() {
       document.querySelectorAll('.tab').forEach((tab) => {
         tab.addEventListener('click', () => {
-          document.querySelectorAll('.tab').forEach((item) => item.classList.remove('active'));
-          document.querySelectorAll('.panel').forEach((panel) => panel.classList.remove('active'));
-          tab.classList.add('active');
-          document.getElementById(tab.dataset.tab).classList.add('active');
+          activateTab(tab.dataset.tab);
         });
       });
+    }
+
+    function activateTab(tabId) {
+      document.querySelectorAll('.tab').forEach((item) => item.classList.toggle('active', item.dataset.tab === tabId));
+      const panel = document.getElementById(tabId);
+      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function bindForms() {
@@ -298,6 +364,18 @@
         event.preventDefault();
         await submitAction('createExpense', formToObject(event.target), 'บันทึกค่าใช้จ่ายแล้ว');
         event.target.reset();
+      });
+      document.getElementById('inventoryEditForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await submitAction('updateInventoryItem', formToObject(event.target), 'แก้ไขรายการสต๊อกแล้ว');
+      });
+      document.getElementById('recipeEditForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await submitAction('updateRecipeItem', formToObject(event.target), 'แก้ไขสูตรแล้ว');
+      });
+      document.getElementById('expenseEditForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await submitAction('updateExpense', formToObject(event.target), 'แก้ไขค่าใช้จ่ายแล้ว');
       });
     }
 
@@ -399,8 +477,14 @@
       fillSelect(document.getElementById('receiveItem'), appState.stockItems, 'item_id', (item) => `${item.item_name} (${item.unit})`);
       fillSelect(document.getElementById('productionProduct'), appState.products, 'item_id', (item) => item.item_name);
       fillSelect(document.getElementById('saleProduct'), appState.products, 'item_id', (item) => `${item.item_name} คงเหลือ ${formatQty(item.on_hand)} ${item.unit}`);
+      fillSelect(document.getElementById('inventoryEditItem'), appState.inventory, 'item_id', (item) => `${item.item_name} (${item.item_id})`);
+      fillSelect(document.getElementById('recipeEditItem'), appState.recipes, 'recipe_id', (recipe) => `${recipe.product_name} - ${recipe.ingredient_name}`);
+      fillSelect(document.getElementById('expenseEditItem'), appState.recentExpenses, 'expense_id', (expense) => `${expense.datetime} - ${expense.description}`);
       document.getElementById('vendorList').innerHTML = appState.vendors.map((vendor) => `<option value="${escapeHtml(vendor.vendor_name)}"></option>`).join('');
       renderReceiveUnit();
+      populateInventoryEditForm();
+      populateRecipeEditForm();
+      populateExpenseEditForm();
     }
 
     function renderReceiveUnit() {
@@ -418,6 +502,7 @@
           <td>${escapeHtml(item.item_name)}</td><td>${escapeHtml(item.item_type)}</td><td>${escapeHtml(item.category)}</td>
           <td class="number">${formatQty(item.on_hand)}</td><td>${escapeHtml(item.unit)}</td>
           <td class="number">${formatQty(item.reorder_level)}</td><td>${statusPill(item.status)}</td>
+          <td class="table-actions"><button class="btn-light btn-small" data-edit-inventory="${escapeHtml(item.item_id)}" type="button">แก้ไข</button></td>
         </tr>`).join(''));
       setHtml('receiveInventoryTable', rows.filter((item) => item.item_type !== 'finished_good').map((item) => `
         <tr><td>${escapeHtml(item.item_name)}</td><td>${escapeHtml(item.category)}</td><td class="number">${formatQty(item.on_hand)}</td><td>${escapeHtml(item.unit)}</td></tr>`).join(''));
@@ -458,14 +543,73 @@
 
     function renderExpenses() {
       setHtml('expensesTable', appState.recentExpenses.length ? appState.recentExpenses.map((expense) => `
-        <tr><td>${escapeHtml(expense.datetime)}</td><td>${escapeHtml(expense.category)}</td><td>${escapeHtml(expense.description)}</td><td class="number">${money.format(Number(expense.amount || 0))}</td></tr>
-      `).join('') : emptyRow(4, 'ยังไม่มีค่าใช้จ่าย'));
+        <tr><td>${escapeHtml(expense.datetime)}</td><td>${escapeHtml(expense.category)}</td><td>${escapeHtml(expense.description)}</td><td class="number">${money.format(Number(expense.amount || 0))}</td><td class="table-actions"><button class="btn-light btn-small" data-edit-expense="${escapeHtml(expense.expense_id)}" type="button">แก้ไข</button></td></tr>
+      `).join('') : emptyRow(5, 'ยังไม่มีค่าใช้จ่าย'));
     }
 
     function renderRecipes() {
       setHtml('recipeTable', appState.recipes.map((recipe) => `
-        <tr><td>${escapeHtml(recipe.product_name)}</td><td>${escapeHtml(recipe.version)}</td><td>${escapeHtml(recipe.ingredient_name)}</td><td class="number">${formatQty(recipe.qty_per_batch)}</td><td>${escapeHtml(recipe.unit)}</td></tr>
+        <tr><td>${escapeHtml(recipe.product_name)}</td><td>${escapeHtml(recipe.version)}</td><td>${escapeHtml(recipe.ingredient_name)}</td><td class="number">${formatQty(recipe.qty_per_batch)}</td><td>${escapeHtml(recipe.unit)}</td><td class="table-actions"><button class="btn-light btn-small" data-edit-recipe="${escapeHtml(recipe.recipe_id)}" type="button">แก้ไข</button></td></tr>
       `).join(''));
+    }
+
+    function populateInventoryEditForm() {
+      const item = appState.inventory.find((row) => row.item_id === document.getElementById('inventoryEditItem').value);
+      if (!item) return;
+      document.getElementById('inventoryEditName').value = item.item_name || '';
+      document.getElementById('inventoryEditType').value = item.item_type || '';
+      document.getElementById('inventoryEditCategory').value = item.category || '';
+      document.getElementById('inventoryEditOnHand').value = item.on_hand || 0;
+      document.getElementById('inventoryEditUnit').value = item.unit || '';
+      document.getElementById('inventoryEditReorder').value = item.reorder_level || 0;
+      document.getElementById('inventoryEditActive').checked = item.active !== false;
+    }
+
+    function populateRecipeEditForm() {
+      const recipe = appState.recipes.find((row) => row.recipe_id === document.getElementById('recipeEditItem').value);
+      if (!recipe) return;
+      document.getElementById('recipeEditProduct').value = recipe.product_name || '';
+      document.getElementById('recipeEditIngredient').value = recipe.ingredient_name || '';
+      document.getElementById('recipeEditVersion').value = recipe.version || '';
+      document.getElementById('recipeEditUnit').value = recipe.unit || '';
+      document.getElementById('recipeEditQty').value = recipe.qty_per_batch || 0;
+    }
+
+    function populateExpenseEditForm() {
+      const expense = appState.recentExpenses.find((row) => row.expense_id === document.getElementById('expenseEditItem').value);
+      if (!expense) return;
+      document.getElementById('expenseEditCategory').value = expense.category || 'ทั่วไป';
+      document.getElementById('expenseEditDescription').value = expense.description || '';
+      document.getElementById('expenseEditAmount').value = expense.amount || 0;
+      document.getElementById('expenseEditNote').value = expense.note || '';
+    }
+
+    function handleEditClick(event) {
+      const inventoryButton = event.target.closest('[data-edit-inventory]');
+      if (inventoryButton) {
+        activateTab('inventory');
+        document.getElementById('inventoryEditItem').value = inventoryButton.dataset.editInventory;
+        populateInventoryEditForm();
+        document.getElementById('inventoryEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const recipeButton = event.target.closest('[data-edit-recipe]');
+      if (recipeButton) {
+        activateTab('recipes');
+        document.getElementById('recipeEditItem').value = recipeButton.dataset.editRecipe;
+        populateRecipeEditForm();
+        document.getElementById('recipeEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const expenseButton = event.target.closest('[data-edit-expense]');
+      if (expenseButton) {
+        activateTab('accounting');
+        document.getElementById('expenseEditItem').value = expenseButton.dataset.editExpense;
+        populateExpenseEditForm();
+        document.getElementById('expenseEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function fillSelect(select, rows, valueKey, labelFn) {
@@ -477,6 +621,9 @@
     function formToObject(form) {
       const data = {};
       new FormData(form).forEach((value, key) => { data[key] = value; });
+      form.querySelectorAll('input[type="checkbox"][name]').forEach((input) => {
+        data[input.name] = input.checked ? (input.value || 'true') : 'false';
+      });
       return data;
     }
 
