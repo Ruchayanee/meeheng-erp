@@ -86,12 +86,12 @@ function seedInventoryMaster_() {
 
     var desired = [
       item.item_id,
-      item.item_name,
-      item.item_type,
-      item.category,
-      item.unit,
+      existing.item_name || item.item_name,
+      existing.item_type || item.item_type,
+      existing.category || item.category,
+      existing.unit || item.unit,
       existing.on_hand === '' ? 0 : existing.on_hand,
-      item.reorder_level,
+      existing.reorder_level === '' ? item.reorder_level : existing.reorder_level,
       existing.active === '' ? true : existing.active,
       existing.updated_at || now
     ];
@@ -115,37 +115,29 @@ function seedInventoryMaster_() {
 }
 
 function seedRecipeMaster_() {
-  var rows = MEEHENG_RECIPE_MASTER.map(function (recipe) {
-    return {
-      recipe_id: recipe.product_id + '__' + recipe.ingredient_id,
-      product_id: recipe.product_id,
-      product_name: recipe.product_name,
-      version: recipe.version,
-      ingredient_id: recipe.ingredient_id,
-      ingredient_name: recipe.ingredient_name,
-      qty_per_batch: recipe.qty_per_batch,
-      unit: recipe.unit
-    };
+  var existingRows = readObjects_(MEEHENG_SHEETS.RECIPES);
+  var existingById = {};
+
+  existingRows.forEach(function (row) {
+    existingById[row.recipe_id] = row;
   });
 
-  var existingRows = readObjects_(MEEHENG_SHEETS.RECIPES).map(function (row) {
-    return {
-      recipe_id: row.recipe_id,
-      product_id: row.product_id,
-      product_name: row.product_name,
-      version: row.version,
-      ingredient_id: row.ingredient_id,
-      ingredient_name: row.ingredient_name,
-      qty_per_batch: toNumber_(row.qty_per_batch),
-      unit: row.unit
-    };
+  MEEHENG_RECIPE_MASTER.forEach(function (recipe) {
+    var recipeId = recipe.product_id + '__' + recipe.ingredient_id;
+
+    if (!existingById[recipeId]) {
+      appendObject_(MEEHENG_SHEETS.RECIPES, {
+        recipe_id: recipeId,
+        product_id: recipe.product_id,
+        product_name: recipe.product_name,
+        version: recipe.version,
+        ingredient_id: recipe.ingredient_id,
+        ingredient_name: recipe.ingredient_name,
+        qty_per_batch: recipe.qty_per_batch,
+        unit: recipe.unit
+      });
+    }
   });
-
-  if (JSON.stringify(existingRows) === JSON.stringify(rows)) {
-    return;
-  }
-
-  replaceSheetRows_(MEEHENG_SHEETS.RECIPES, rows);
 }
 
 function seedVendorMaster_() {
@@ -178,6 +170,47 @@ function getRecipeRows_(productId) {
 function getRecipesForClient_() {
   var recipes = readObjects_(MEEHENG_SHEETS.RECIPES);
   return formatRowsForClient_(recipes);
+}
+
+function updateRecipeItem(payload) {
+  return withDbLock_(function () {
+    ensureDatabaseReady_();
+
+    var recipeId = normalizeText_(payload.recipe_id);
+    var rows = readObjects_(MEEHENG_SHEETS.RECIPES);
+    var recipe = null;
+
+    rows.forEach(function (row) {
+      if (row.recipe_id === recipeId) {
+        recipe = row;
+      }
+    });
+
+    if (!recipe) {
+      throw new Error('ไม่พบสูตรที่ต้องการแก้ไข');
+    }
+
+    var updated = {
+      recipe_id: recipe.recipe_id,
+      product_id: recipe.product_id,
+      product_name: recipe.product_name,
+      version: normalizeText_(payload.version) || recipe.version,
+      ingredient_id: recipe.ingredient_id,
+      ingredient_name: recipe.ingredient_name,
+      qty_per_batch: payload.qty_per_batch === undefined || payload.qty_per_batch === ''
+        ? roundQty_(recipe.qty_per_batch)
+        : requirePositiveNumber_(payload.qty_per_batch, 'จำนวนต่อชุด'),
+      unit: normalizeText_(payload.unit) || recipe.unit
+    };
+
+    updateObjectRow_(MEEHENG_SHEETS.RECIPES, recipe._rowNumber, updated);
+
+    return {
+      ok: true,
+      recipe: formatRowsForClient_([updated])[0],
+      recipes: getRecipesForClient_()
+    };
+  });
 }
 
 function getProducts_() {
