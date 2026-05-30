@@ -116,6 +116,55 @@ function getRecentStockMovements(limit) {
   return formatRowsForClient_(rows.slice(Math.max(rows.length - rowLimit, 0)).reverse());
 }
 
+function updateInventoryItem(payload) {
+  return withDbLock_(function () {
+    ensureDatabaseReady_();
+
+    var item = findInventoryItem_(payload.item_id);
+    var nextOnHand = payload.on_hand === undefined || payload.on_hand === ''
+      ? roundQty_(item.on_hand)
+      : roundQty_(payload.on_hand);
+    var currentOnHand = roundQty_(item.on_hand);
+    var difference = roundQty_(nextOnHand - currentOnHand);
+
+    if (difference !== 0) {
+      createStockMovement_({
+        type: 'ADJUSTMENT',
+        item_id: item.item_id,
+        qty: difference,
+        allow_negative: true,
+        ref_type: 'INVENTORY_EDIT',
+        ref_id: item.item_id,
+        note: 'แก้ไขยอดคงเหลือจากหน้าแอป',
+        user: getCurrentUser_()
+      });
+      item = findInventoryItem_(item.item_id);
+    }
+
+    var updated = {
+      item_id: item.item_id,
+      item_name: normalizeText_(payload.item_name) || item.item_name,
+      item_type: normalizeText_(payload.item_type) || item.item_type,
+      category: normalizeText_(payload.category) || item.category,
+      unit: normalizeText_(payload.unit) || item.unit,
+      on_hand: nextOnHand,
+      reorder_level: payload.reorder_level === undefined || payload.reorder_level === ''
+        ? roundQty_(item.reorder_level)
+        : roundQty_(payload.reorder_level),
+      active: parseBoolean_(payload.active, item.active !== false),
+      updated_at: new Date()
+    };
+
+    updateObjectRow_(MEEHENG_SHEETS.INVENTORY, item._rowNumber, updated);
+
+    return {
+      ok: true,
+      item: formatRowsForClient_([updated])[0],
+      inventory: getInventory()
+    };
+  });
+}
+
 function findInventoryItem_(idOrName) {
   var lookup = normalizeText_(idOrName);
 
