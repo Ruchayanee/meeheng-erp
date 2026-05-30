@@ -235,6 +235,17 @@ function appendObject_(sheetName, row) {
   return row;
 }
 
+function updateObjectRow_(sheetName, rowNumber, row) {
+  var sheet = getSheet_(sheetName);
+  var headers = MEEHENG_HEADERS[sheetName];
+  var values = headers.map(function (header) {
+    return row[header] === undefined ? '' : row[header];
+  });
+
+  sheet.getRange(rowNumber, 1, 1, headers.length).setValues([values]);
+  return row;
+}
+
 function replaceSheetRows_(sheetName, rows) {
   var sheet = getSheet_(sheetName);
   var headers = MEEHENG_HEADERS[sheetName];
@@ -298,6 +309,19 @@ function requirePositiveNumber_(value, label) {
 
 function normalizeText_(value) {
   return String(value || '').trim();
+}
+
+function parseBoolean_(value, defaultValue) {
+  if (value === true || value === false) {
+    return value;
+  }
+
+  if (value === undefined || value === null || value === '') {
+    return defaultValue;
+  }
+
+  var normalized = String(value).toLowerCase();
+  return normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on';
 }
 
 function getCurrentUser_() {
