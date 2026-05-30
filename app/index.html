@@ -58,7 +58,7 @@
     .btn-light { background: #e2e8f0; color: #0f172a; }
     .btn-small { border-radius: 999px; font-size: 12px; min-height: 32px; padding: 6px 10px; }
     .status { background: #ffffff; border: 1px solid #e4ddd4; border-radius: 999px; color: #971818; font-weight: 800; padding: 8px 12px; }
-    .panel { display: block; margin-bottom: 14px; scroll-margin-top: 12px; }
+    .panel { display: none; margin-bottom: 14px; scroll-margin-top: 12px; }
     .panel.active { display: block; }
     .grid { display: grid; gap: 12px; }
     .kpis { grid-template-columns: repeat(6, minmax(150px, 1fr)); margin-bottom: 12px; }
@@ -338,6 +338,7 @@
 
     function activateTab(tabId) {
       document.querySelectorAll('.tab').forEach((item) => item.classList.toggle('active', item.dataset.tab === tabId));
+      document.querySelectorAll('.panel').forEach((panel) => panel.classList.toggle('active', panel.id === tabId));
       const panel = document.getElementById(tabId);
       if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
