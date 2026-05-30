@@ -1,6 +1,8 @@
 var MEEHENG_DB_VERSION = '2026-05-29.1';
 var MEEHENG_TIME_ZONE = 'Asia/Bangkok';
 var MEEHENG_DEFAULT_SPREADSHEET_ID = '1rofHESQvjWRnDwz7szudx_eQIsepHm9Pc7gqalgGNHY';
+var MEEHENG_DATABASE_READY_ = false;
+var MEEHENG_DB_LOCK_HELD_ = false;
 
 var MEEHENG_SHEETS = {
   INVENTORY: 'Inventory',
@@ -108,9 +110,20 @@ function setupDatabase() {
 }
 
 function ensureDatabaseReady_() {
-  var spreadsheet = getDb_();
-  initializeDb_(spreadsheet);
-  return spreadsheet;
+  if (MEEHENG_DATABASE_READY_) {
+    return getDb_();
+  }
+
+  return withDbLock_(function () {
+    var spreadsheet = getDb_();
+
+    if (!MEEHENG_DATABASE_READY_) {
+      initializeDb_(spreadsheet);
+      MEEHENG_DATABASE_READY_ = true;
+    }
+
+    return spreadsheet;
+  });
 }
 
 function initializeDb_(spreadsheet) {
@@ -266,12 +279,18 @@ function replaceSheetRows_(sheetName, rows) {
 }
 
 function withDbLock_(callback) {
+  if (MEEHENG_DB_LOCK_HELD_) {
+    return callback();
+  }
+
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
+  MEEHENG_DB_LOCK_HELD_ = true;
 
   try {
     return callback();
   } finally {
+    MEEHENG_DB_LOCK_HELD_ = false;
     lock.releaseLock();
   }
 }
