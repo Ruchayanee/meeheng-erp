@@ -165,7 +165,7 @@ function findRequestedTab(query) {
 }
 
 function getLowStockAssistantText() {
-  const lowRows = appState.inventory.filter((item) => item.status !== 'ok');
+  const lowRows = appState.inventory.filter((item) => item.item_type !== 'finished_good' && item.status !== 'ok');
   if (!lowRows.length) return 'ตอนนี้ยังไม่มีรายการต่ำกว่าเกณฑ์';
   const preview = lowRows.slice(0, 8).map((item) => `${item.item_name} ${formatQty(item.on_hand)} ${item.unit}`).join('\n');
   const more = lowRows.length > 8 ? `\nและอีก ${lowRows.length - 8} รายการ` : '';
