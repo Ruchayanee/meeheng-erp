@@ -305,6 +305,7 @@
         </div>
       </div>
     </section>
+
   </main>
 
   <script>
@@ -638,7 +639,7 @@
     function setHtml(id, value) { document.getElementById(id).innerHTML = value; }
     function emptyRow(columns, text) { return `<tr><td class="muted" colspan="${columns}">${escapeHtml(text)}</td></tr>`; }
     function setBusy(isBusy) {
-      document.querySelectorAll('button').forEach((button) => { button.disabled = isBusy; });
+      document.querySelectorAll('button').forEach((button) => { button.disabled = isBusy || button.dataset.permanentDisabled === 'true'; });
       document.getElementById('dbStatus').textContent = isBusy ? 'กำลังทำงาน' : ((appState.database && appState.database.version) ? `DB ${appState.database.version}` : 'พร้อมใช้งาน');
     }
     function showMessage(text, type) {
@@ -650,5 +651,6 @@
         .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
   </script>
+  <script src="./assistant.js"></script>
 </body>
 </html>
