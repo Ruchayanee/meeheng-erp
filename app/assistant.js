@@ -36,8 +36,8 @@ function installAssistantUi() {
         </div>
         <div class="quick-commands">
           <button class="quick-command" data-assistant-query="วันนี้ควรทำอะไรก่อน" type="button">งานด่วน</button>
-          <button class="quick-command" data-assistant-query="ต้องเติมอะไรบ้าง" type="button">ต้องเติม</button>
-          <button class="quick-command" data-assistant-query="ผลิตลูกชิ้นพอไหม" type="button">เช็กผลิต</button>
+          <button class="quick-command" data-assistant-query="อะไรเร่งด่วนสุด" type="button">ด่วนสุด</button>
+          <button class="quick-command" data-assistant-query="ถ้าจะผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร" type="button">แผนผลิต</button>
           <button class="quick-command" data-assistant-query="เปิดหน้าสต๊อก" type="button">เปิดสต๊อก</button>
         </div>
         <form class="assistant-input-row" id="assistantForm">
@@ -121,6 +121,11 @@ function getAssistantResponse(rawQuery) {
   const product = findProductInQuery(query);
   const inventoryItem = findInventoryItemInQuery(query);
   const requestedBatches = getRequestedBatchCount(query);
+  const productPlanIntent = product && includesAny(query, ['ผลิต', 'ทำ', 'พอไหม', 'พอหรือไม่', 'กี่ชุด', 'ขาดอะไร', 'ต้องซื้อ', 'ควรซื้อ', 'ซื้ออะไร', 'เติมอะไร', 'ต้องเติม', 'วางแผน', 'แผนผลิต', 'วัตถุดิบ', 'ถ้า']);
+
+  if (includesAny(query, ['เร่งด่วนสุด', 'ด่วนสุด', 'อะไรด่วน', 'สำคัญสุด', 'จัดลำดับ', 'ลำดับงาน', 'ต้องทำก่อน'])) {
+    return { text: getPriorityText() };
+  }
 
   if (includesAny(query, ['ควรทำ', 'ทำอะไรก่อน', 'งานด่วน', 'ต้องทำ', 'แนะนำวันนี้'])) {
     return { text: getDailyPlanText() };
@@ -133,12 +138,20 @@ function getAssistantResponse(rawQuery) {
     };
   }
 
-  if (includesAny(query, ['ใกล้หมด', 'ของหมด', 'ต้องซื้อ', 'ควรซื้อ', 'เติมอะไร', 'ต้องเติม', 'สั่งซื้อ', 'ต้องสั่ง', 'ต่ำกว่าเกณฑ์', 'ขาดอะไร'])) {
-    return { text: getRestockAssistantText() };
+  if (productPlanIntent) {
+    if (includesAny(query, ['ต้องซื้อ', 'ควรซื้อ', 'ซื้ออะไร', 'เติมอะไร', 'ต้องเติม', 'วางแผน', 'แผนผลิต', 'ถ้า'])) {
+      return { text: getProductShoppingPlanText(product, requestedBatches) };
+    }
+    return { text: getProductProductionText(product, requestedBatches) };
   }
 
-  if (product && includesAny(query, ['ผลิต', 'ทำ', 'พอไหม', 'พอหรือไม่', 'กี่ชุด', 'ขาดอะไร'])) {
-    return { text: getProductProductionText(product, requestedBatches) };
+  if (includesAny(query, ['ควรผลิต', 'ผลิตอะไรก่อน', 'ผลิตตัวไหน', 'สินค้าไหนต้องผลิต'])) {
+    return { text: getProductionPriorityText() };
+  }
+
+  if (includesAny(query, ['ใกล้หมด', 'ของหมด', 'ต้องซื้อ', 'ควรซื้อ', 'เติมอะไร', 'ต้องเติม', 'สั่งซื้อ', 'ต้องสั่ง', 'ต่ำกว่าเกณฑ์', 'ขาดอะไร'])) {
+    if (includesAny(query, ['หมวด', 'แยกหมวด', 'จัดหมวด'])) return { text: getRestockByCategoryText() };
+    return { text: getRestockAssistantText() };
   }
 
   if (query.includes('ผลิต') && includesAny(query, ['กี่ชุด', 'ได้เท่าไร', 'ได้กี่', 'พอไหม', 'พอหรือไม่', 'ขาดอะไร'])) {
@@ -156,13 +169,13 @@ function getAssistantResponse(rawQuery) {
   }
 
   if (includesAny(query, ['สวัสดี', 'ช่วยอะไร', 'ทำอะไรได้', 'ใช้งานยังไง'])) {
-    return { text: 'ถามได้เลย เช่น วันนี้ควรทำอะไรก่อน ต้องเติมอะไรบ้าง ผลิตลูกชิ้นพอไหม แป้งเหลือเท่าไร หรือเปิดหน้าสต๊อก' };
+    return { text: 'ถามได้เลย เช่น อะไรเร่งด่วนสุด ถ้าจะผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร ผลิตหมูยอสองชุดพอไหม แป้งเหลือเท่าไร หรือเปิดหน้าสต๊อก' };
   }
 
   const nearbyItem = findInventoryItemInQuery(query, 0.28);
   if (nearbyItem) return { text: `หมายถึง ${nearbyItem.item_name} ใช่ไหม\n${getInventoryItemText(nearbyItem)}` };
 
-  return { text: 'ยังไม่เข้าใจคำถามนี้ ลองถามว่า วันนี้ควรทำอะไรก่อน ต้องเติมอะไรบ้าง ผลิตลูกชิ้นพอไหม หรือระบุชื่อวัตถุดิบที่ต้องการเช็ก' };
+  return { text: 'ยังไม่เข้าใจคำถามนี้ ลองถามว่า อะไรเร่งด่วนสุด ต้องเติมอะไรบ้าง ถ้าจะผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร หรือระบุชื่อวัตถุดิบที่ต้องการเช็ก' };
 }
 
 function findRequestedTab(query) {
@@ -196,18 +209,53 @@ function getRestockAssistantText() {
     return `${item.item_name}: เหลือ ${formatQty(item.on_hand)} ${item.unit}${suffix}`;
   }).join('\n');
   const more = lowRows.length > 8 ? `\nและอีก ${lowRows.length - 8} รายการ เปิดหน้าสต๊อกเพื่อดูทั้งหมดได้เลย` : '';
-  return `ควรดูแล ${lowRows.length} รายการ\n${preview}${more}`;
+  return `ควรดูแล ${lowRows.length} รายการ\nด่วนสุด: ${lowRows.slice(0, 3).map((item) => item.item_name).join(', ')}\n${preview}${more}`;
+}
+
+function getRestockByCategoryText() {
+  const lowRows = getRestockRows();
+  if (!lowRows.length) return 'ตอนนี้ยังไม่มีรายการที่ต้องเติม';
+  const groups = lowRows.reduce((result, item) => {
+    const category = item.category || 'ไม่ระบุหมวด';
+    if (!result[category]) result[category] = [];
+    result[category].push(item);
+    return result;
+  }, {});
+  return Object.entries(groups).map(([category, items]) => {
+    const names = items.slice(0, 4).map((item) => item.item_name).join(', ');
+    const more = items.length > 4 ? ` และอีก ${items.length - 4}` : '';
+    return `${category}: ${items.length} รายการ (${names}${more})`;
+  }).join('\n');
+}
+
+function getPriorityText() {
+  const restockRows = getRestockRows();
+  const productionRows = getProductionBlockers();
+  const lines = ['ลำดับที่ควรดูตอนนี้'];
+  if (restockRows.length) {
+    lines.push(`1. เติมสต๊อกด่วน ${restockRows.length} รายการ: ${restockRows.slice(0, 5).map((item) => item.item_name).join(', ')}`);
+  } else {
+    lines.push('1. สต๊อกขั้นต่ำยังไม่เจอรายการที่ต้องเติม');
+  }
+  if (productionRows.length) {
+    const top = productionRows.slice(0, 3).map((row) => `${row.productName}ติดที่${row.itemName}`).join(', ');
+    lines.push(`2. ผลิตยังติดวัตถุดิบ: ${top}`);
+  } else {
+    lines.push('2. วัตถุดิบผลิตดูพร้อมกว่าเดิม ไม่มีตัวติดหลัก');
+  }
+  lines.push('3. ถ้าจะผลิตตามออเดอร์ ให้ถามแบบ "ผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร"');
+  return lines.join('\n');
 }
 
 function getDailyPlanText() {
   const summary = appState.summary || {};
   const restockRows = getRestockRows();
   const urgentRows = restockRows.slice(0, 5).map((item) => item.item_name).join(', ');
-  const productionText = getProductionCapacityText();
+  const priorityText = getPriorityText();
   return [
     `วันนี้ยอดขาย ${money.format(Number(summary.todaySales || 0))} บาท`,
     restockRows.length ? `อันดับแรกควรเติม/เช็กสต๊อก ${restockRows.length} รายการ: ${urgentRows}` : 'สต๊อกยังไม่มีรายการต่ำกว่าเกณฑ์',
-    productionText
+    priorityText
   ].join('\n');
 }
 
@@ -237,6 +285,46 @@ function getProductProductionText(product, requestedBatches) {
   const blocker = detail.blockers[0];
   if (!blocker) return `${product.item_name} ผลิตได้ ${qty.format(detail.capacity)} ชุด วัตถุดิบพอสำหรับอย่างน้อย 1 ชุด`;
   return `${product.item_name} ตอนนี้ผลิตได้ ${qty.format(detail.capacity)} ชุด\nตัวที่ติดที่สุดคือ ${blocker.itemName}: มี ${formatQty(blocker.onHand)} ${blocker.unit}, ต้องใช้ต่อชุด ${formatQty(blocker.perBatch)} ${blocker.unit}`;
+}
+
+function getProductShoppingPlanText(product, requestedBatches) {
+  const batches = requestedBatches || 1;
+  const detail = getProductCapacityDetail(product, batches);
+  if (!detail.recipes.length) return `${product.item_name} ยังไม่มีสูตรในระบบ`;
+  const missingRows = detail.ingredients.filter((row) => row.missing > 0).sort((a, b) => b.missing - a.missing);
+  const prefix = requestedBatches ? `แผนผลิต ${product.item_name} ${batches} ชุด` : `คำนวณ ${product.item_name} ให้ที่ 1 ชุดก่อน`;
+  if (!missingRows.length) {
+    return `${prefix}\nวัตถุดิบพอ ไม่ต้องซื้อเพิ่ม\nตอนนี้ผลิตได้ประมาณ ${qty.format(detail.capacity)} ชุด`;
+  }
+  const lines = missingRows.map((row) => `${row.name}: ซื้อเพิ่ม ${formatQty(row.missing)} ${row.unit} (ต้องใช้ ${formatQty(row.required)}, มี ${formatQty(row.onHand)})`);
+  const hint = requestedBatches ? '' : '\nถ้าจะผลิตหลายชุด พิมพ์เช่น "ลูกชิ้น 5 ชุดต้องซื้ออะไร"';
+  return `${prefix}\nต้องซื้อ/เติมเพิ่ม ${missingRows.length} รายการ\n${lines.join('\n')}${hint}`;
+}
+
+function getProductionPriorityText() {
+  if (!appState.products.length) return 'ยังไม่มีสินค้าให้คำนวณการผลิต';
+  const rows = appState.products.map((product) => {
+    const detail = getProductCapacityDetail(product);
+    const blocker = detail.blockers[0];
+    const inventoryRow = appState.inventory.find((item) => item.item_id === product.item_id) || product;
+    return {
+      product,
+      capacity: detail.capacity,
+      blocker,
+      status: inventoryRow.status || 'ok',
+      onHand: Number(inventoryRow.on_hand || 0),
+      unit: inventoryRow.unit || product.unit || 'ชุด'
+    };
+  }).sort((a, b) => {
+    const statusOrder = { out: 0, low: 1, ok: 2 };
+    const statusDiff = (statusOrder[a.status] || 2) - (statusOrder[b.status] || 2);
+    if (statusDiff) return statusDiff;
+    return a.capacity - b.capacity;
+  });
+  return rows.map((row, index) => {
+    const blockerText = row.blocker ? ` ติดที่ ${row.blocker.itemName}` : ' วัตถุดิบพร้อมกว่า';
+    return `${index + 1}. ${row.product.item_name}: สินค้าคงเหลือ ${formatQty(row.onHand)} ${row.unit}, ผลิตได้ ${qty.format(row.capacity)} ชุด${blockerText}`;
+  }).join('\n');
 }
 
 function getProductCapacityDetail(product, requestedBatches = 1) {
@@ -293,13 +381,27 @@ function getRestockRows() {
     });
 }
 
+function getProductionBlockers() {
+  return appState.products.flatMap((product) => {
+    const detail = getProductCapacityDetail(product);
+    return detail.blockers.slice(0, 1).map((blocker) => ({
+      productName: product.item_name,
+      itemName: blocker.itemName,
+      missing: blocker.missing,
+      unit: blocker.unit
+    }));
+  }).sort((a, b) => b.missing - a.missing);
+}
+
 function getMissingQty(item) {
   return Math.max(Number(item.reorder_level || 0) - Number(item.on_hand || 0), 0);
 }
 
 function getRequestedBatchCount(query) {
-  const match = query.match(/(\d+(?:\.\d+)?)\s*(ชุด|รอบ|batch)?/);
-  return match ? Number(match[1]) : 0;
+  const normalizedQuery = normalizeThaiDigits(query);
+  const match = normalizedQuery.match(/(\d+(?:\.\d+)?)\s*(ชุด|รอบ|batch)?/);
+  if (match) return Number(match[1]);
+  return getThaiWordBatchCount(query);
 }
 
 function findProductInQuery(query) {
@@ -312,6 +414,26 @@ function findInventoryItemInQuery(query, threshold = 0.34) {
 
 function normalizeAssistantText(value) {
   return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function normalizeThaiDigits(value) {
+  const digits = { '๐': '0', '๑': '1', '๒': '2', '๓': '3', '๔': '4', '๕': '5', '๖': '6', '๗': '7', '๘': '8', '๙': '9' };
+  return String(value || '').replace(/[๐-๙]/g, (digit) => digits[digit] || digit);
+}
+
+function getThaiWordBatchCount(query) {
+  const words = [
+    ['ยี่สิบ', 20], ['สิบเก้า', 19], ['สิบแปด', 18], ['สิบเจ็ด', 17], ['สิบหก', 16],
+    ['สิบห้า', 15], ['สิบสี่', 14], ['สิบสาม', 13], ['สิบสอง', 12], ['สิบเอ็ด', 11],
+    ['สิบ', 10], ['เก้า', 9], ['แปด', 8], ['เจ็ด', 7], ['หก', 6], ['ห้า', 5],
+    ['สี่', 4], ['สาม', 3], ['สอง', 2], ['หนึ่ง', 1], ['นึง', 1]
+  ];
+  const text = normalizeAssistantText(query);
+  const pattern = new RegExp(`(${words.map(([word]) => word).join('|')})\\s*(ชุด|รอบ|batch)`);
+  const match = text.match(pattern);
+  if (!match) return 0;
+  const found = words.find(([word]) => word === match[1]);
+  return found ? found[1] : 0;
 }
 
 function assistantSearchKey(value) {
