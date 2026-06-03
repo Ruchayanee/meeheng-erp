@@ -1,656 +1,608 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mee Heng Food Super App</title>
-  <style>
-    :root {
-      --bg: #f3f0ea;
-      --panel: #ffffff;
-      --ink: #2b2b2b;
-      --muted: #777777;
-      --line: #ece7df;
-      --blue: #2563eb;
-      --green: #17b169;
-      --amber: #ffb703;
-      --red: #d62828;
-    }
-
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Noto Sans Thai", sans-serif; line-height: 1.45; }
-    header { color: var(--ink); padding: 14px 24px 0; }
-    main, .topbar { margin: 0 auto; max-width: 1120px; }
-    main { padding: 0 24px 24px; }
-    h1 { color: #971818; font-size: 52px; font-weight: 900; line-height: 1.05; margin: 18px 0 8px; text-align: center; }
-    h2 { font-size: 22px; margin: 0 0 12px; }
-    p { color: var(--muted); margin: 4px 0 0; }
-    button, input, select, textarea { font: inherit; }
-    button { border: 0; border-radius: 18px; cursor: pointer; font-weight: 800; min-height: 44px; padding: 10px 14px; }
-    button:disabled { cursor: wait; opacity: .55; }
-    input, select, textarea { border: 1px solid #ddd4c8; border-radius: 16px; min-height: 44px; padding: 10px 12px; width: 100%; }
-    textarea { min-height: 78px; resize: vertical; }
-    label { color: #334155; display: grid; font-size: 13px; font-weight: 700; gap: 6px; }
-    form { display: grid; gap: 12px; }
-    table { border-collapse: collapse; min-width: 720px; width: 100%; }
-    th, td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
-    th { background: #f8fafc; color: #334155; font-size: 13px; position: sticky; top: 0; }
-    tr:last-child td { border-bottom: 0; }
-
-    .topbar { display: block; max-width: 760px; }
-    .bell { font-size: 28px; padding-top: 8px; text-align: right; }
-    .center { margin-top: 18px; text-align: center; }
-    .logo { filter: drop-shadow(0 10px 25px rgba(0,0,0,.12)); height: 220px; object-fit: contain; width: 220px; }
-    .subtitle { color: #777; font-size: 20px; font-weight: 800; text-align: center; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 18px auto 4px; }
-    .tabs { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 28px auto 22px; max-width: 1120px; }
-    .tab { background: linear-gradient(135deg,#1e293b,#334155); box-shadow: 0 10px 25px rgba(0,0,0,.12); color: #ffffff; min-height: 92px; padding: 20px; text-align: left; }
-    .tab strong { display: block; font-size: 25px; line-height: 1.1; }
-    .tab small { display: block; font-size: 13px; font-weight: 700; margin-top: 8px; opacity: .92; }
-    .tab[data-tab="dashboard"], .tab[data-tab="accounting"] { background: linear-gradient(135deg,#a31212,#d62828); }
-    .tab[data-tab="receive"], .tab[data-tab="inventory"] { background: linear-gradient(135deg,#0b8d4d,#17b169); }
-    .tab[data-tab="production"], .tab[data-tab="sales"] { background: linear-gradient(135deg,#d48b00,#ffb703); color: #2b2b2b; }
-    .tab[data-tab="recipes"] { background: linear-gradient(135deg,#1e293b,#475569); }
-    .tab.active { outline: 4px solid rgba(151,24,24,.22); transform: translateY(-2px); }
-    .btn-primary { background: var(--blue); color: #ffffff; }
-    .btn-green { background: var(--green); color: #ffffff; }
-    .btn-amber { background: var(--amber); color: #2b2b2b; }
-    .btn-light { background: #e2e8f0; color: #0f172a; }
-    .btn-small { border-radius: 999px; font-size: 12px; min-height: 32px; padding: 6px 10px; }
-    .status { background: #ffffff; border: 1px solid #e4ddd4; border-radius: 999px; color: #971818; font-weight: 800; padding: 8px 12px; }
-    .panel { display: none; margin-bottom: 14px; scroll-margin-top: 12px; }
-    .panel.active { display: block; }
-    .grid { display: grid; gap: 12px; }
-    .kpis { grid-template-columns: repeat(6, minmax(150px, 1fr)); margin-bottom: 12px; }
-    .two-col { grid-template-columns: minmax(280px, .75fr) minmax(320px, 1.25fr); }
-    .form-row { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 10px 20px rgba(0,0,0,.08); padding: 20px; }
-    .kpi { min-height: 100px; }
-    .kpi span { color: var(--muted); display: block; font-size: 13px; margin-bottom: 10px; }
-    .kpi strong { display: block; font-size: 26px; line-height: 1.1; overflow-wrap: anywhere; }
-    .table-wrap { border: 1px solid var(--line); border-radius: 8px; overflow: auto; }
-    .number { text-align: right; white-space: nowrap; }
-    .muted { color: var(--muted); }
-    .table-actions { min-width: 84px; text-align: right; }
-    .checkbox-row { align-items: center; display: flex; gap: 8px; min-height: 44px; }
-    .checkbox-row input { min-height: auto; width: auto; }
-    .editor-note { color: var(--muted); font-size: 13px; font-weight: 700; }
-    .pill { border-radius: 999px; display: inline-flex; font-size: 12px; font-weight: 700; padding: 4px 8px; }
-    .pill.ok { background: #dcfce7; color: #166534; }
-    .pill.low { background: #fef3c7; color: #92400e; }
-    .pill.out { background: #fee2e2; color: #991b1b; }
-    .notice { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 18px; color: #9a3412; margin: 12px auto; max-width: 1120px; padding: 12px 14px; }
-    .notice.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-    .notice.success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-
-    @media (max-width: 980px) {
-      .topbar { align-items: flex-start; flex-direction: column; }
-      .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .two-col { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 560px) {
-      header, main { padding-left: 12px; padding-right: 12px; }
-      h1 { font-size: 42px; }
-      .logo { height: 180px; width: 180px; }
-      .subtitle { font-size: 18px; }
-      .tabs { grid-template-columns: 1fr; }
-      .kpis, .form-row { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mee Heng Food Super App</title>
+<style>
+:root {
+--bg: #f3f0ea;
+--panel: #ffffff;
+--ink: #2b2b2b;
+--muted: #777777;
+--line: #ece7df;
+--blue: #2563eb;
+--green: #17b169;
+--amber: #ffb703;
+--red: #d62828;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Noto Sans Thai", sans-serif; line-height: 1.45; }
+header { color: var(--ink); padding: 14px 24px 0; }
+main, .topbar { margin: 0 auto; max-width: 1120px; }
+main { padding: 0 24px 24px; }
+h1 { color: #971818; font-size: 52px; font-weight: 900; line-height: 1.05; margin: 18px 0 8px; text-align: center; }
+h2 { font-size: 22px; margin: 0 0 12px; }
+p { color: var(--muted); margin: 4px 0 0; }
+button, input, select, textarea { font: inherit; }
+button { border: 0; border-radius: 18px; cursor: pointer; font-weight: 800; min-height: 44px; padding: 10px 14px; }
+button:disabled { cursor: wait; opacity: .55; }
+input, select, textarea { border: 1px solid #ddd4c8; border-radius: 16px; min-height: 44px; padding: 10px 12px; width: 100%; }
+textarea { min-height: 78px; resize: vertical; }
+label { color: #334155; display: grid; font-size: 13px; font-weight: 700; gap: 6px; }
+form { display: grid; gap: 12px; }
+table { border-collapse: collapse; min-width: 720px; width: 100%; }
+th, td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+th { background: #f8fafc; color: #334155; font-size: 13px; position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+.topbar { display: block; max-width: 760px; }
+.bell { font-size: 28px; padding-top: 8px; text-align: right; }
+.center { margin-top: 18px; text-align: center; }
+.logo { filter: drop-shadow(0 10px 25px rgba(0,0,0,.12)); height: 220px; object-fit: contain; width: 220px; }
+.subtitle { color: #777; font-size: 20px; font-weight: 800; text-align: center; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 18px auto 4px; }
+.tabs { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 28px auto 22px; max-width: 1120px; }
+.tab { background: linear-gradient(135deg,#1e293b,#334155); box-shadow: 0 10px 25px rgba(0,0,0,.12); color: #ffffff; min-height: 92px; padding: 20px; text-align: left; }
+.tab strong { display: block; font-size: 25px; line-height: 1.1; }
+.tab small { display: block; font-size: 13px; font-weight: 700; margin-top: 8px; opacity: .92; }
+.tab[data-tab="dashboard"], .tab[data-tab="accounting"] { background: linear-gradient(135deg,#a31212,#d62828); }
+.tab[data-tab="receive"], .tab[data-tab="inventory"] { background: linear-gradient(135deg,#0b8d4d,#17b169); }
+.tab[data-tab="production"], .tab[data-tab="sales"] { background: linear-gradient(135deg,#d48b00,#ffb703); color: #2b2b2b; }
+.tab[data-tab="recipes"] { background: linear-gradient(135deg,#1e293b,#475569); }
+.tab.active { outline: 4px solid rgba(151,24,24,.22); transform: translateY(-2px); }
+.btn-primary { background: var(--blue); color: #ffffff; }
+.btn-green { background: var(--green); color: #ffffff; }
+.btn-amber { background: var(--amber); color: #2b2b2b; }
+.btn-light { background: #e2e8f0; color: #0f172a; }
+.btn-small { border-radius: 999px; font-size: 12px; min-height: 32px; padding: 6px 10px; }
+.status { background: #ffffff; border: 1px solid #e4ddd4; border-radius: 999px; color: #971818; font-weight: 800; padding: 8px 12px; }
+.panel { display: none; margin-bottom: 14px; scroll-margin-top: 12px; }
+.panel.active { display: block; }
+.grid { display: grid; gap: 12px; }
+.kpis { grid-template-columns: repeat(6, minmax(150px, 1fr)); margin-bottom: 12px; }
+.two-col { grid-template-columns: minmax(280px, .75fr) minmax(320px, 1.25fr); }
+.form-row { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 10px 20px rgba(0,0,0,.08); padding: 20px; }
+.kpi { min-height: 100px; }
+.kpi span { color: var(--muted); display: block; font-size: 13px; margin-bottom: 10px; }
+.kpi strong { display: block; font-size: 26px; line-height: 1.1; overflow-wrap: anywhere; }
+.table-wrap { border: 1px solid var(--line); border-radius: 8px; overflow: auto; }
+.number { text-align: right; white-space: nowrap; }
+.muted { color: var(--muted); }
+.table-actions { min-width: 84px; text-align: right; }
+.checkbox-row { align-items: center; display: flex; gap: 8px; min-height: 44px; }
+.checkbox-row input { min-height: auto; width: auto; }
+.editor-note { color: var(--muted); font-size: 13px; font-weight: 700; }
+.pill { border-radius: 999px; display: inline-flex; font-size: 12px; font-weight: 700; padding: 4px 8px; }
+.pill.ok { background: #dcfce7; color: #166534; }
+.pill.low { background: #fef3c7; color: #92400e; }
+.pill.out { background: #fee2e2; color: #991b1b; }
+.notice { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 18px; color: #9a3412; margin: 12px auto; max-width: 1120px; padding: 12px 14px; }
+.notice.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.notice.success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+@media (max-width: 980px) {
+.topbar { align-items: flex-start; flex-direction: column; }
+.tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.two-col { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+header, main { padding-left: 12px; padding-right: 12px; }
+h1 { font-size: 42px; }
+.logo { height: 180px; width: 180px; }
+.subtitle { font-size: 18px; }
+.tabs { grid-template-columns: 1fr; }
+.kpis, .form-row { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="topbar">
-      <div class="bell" aria-hidden="true">🔔</div>
-      <div class="center">
-        <img class="logo" src="https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png" alt="Mee Heng Food">
-        <h1>Mee Heng Food</h1>
-        <p class="subtitle">Super App Management System</p>
-      </div>
-      <div class="actions">
-        <span class="status" id="dbStatus">กำลังโหลด</span>
-        <button class="btn-light" id="setupBtn" type="button">ตั้งค่าฐานข้อมูล</button>
-        <button class="btn-primary" id="refreshBtn" type="button">รีเฟรช</button>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <div id="message"></div>
-
-    <nav class="tabs" aria-label="Main menu">
-      <button class="tab active" data-tab="dashboard" type="button"><strong>📊 Dashboard</strong><small>ภาพรวมวันนี้และเดือนนี้</small></button>
-      <button class="tab" data-tab="receive" type="button"><strong>📥 รับเข้า</strong><small>บันทึกวัตถุดิบและของเข้า</small></button>
-      <button class="tab" data-tab="production" type="button"><strong>🥣 ผลิต</strong><small>ตัดวัตถุดิบตามสูตร</small></button>
-      <button class="tab" data-tab="sales" type="button"><strong>🛒 ขาย</strong><small>บันทึกยอดขายหน้าร้านและแม่ค้า</small></button>
-      <button class="tab" data-tab="accounting" type="button"><strong>💰 บัญชี</strong><small>ค่าใช้จ่ายและกำไร</small></button>
-      <button class="tab" data-tab="inventory" type="button"><strong>📦 สต๊อก</strong><small>ตรวจคงเหลือทั้งหมด</small></button>
-      <button class="tab" data-tab="recipes" type="button"><strong>🧾 สูตร</strong><small>ลูกชิ้น หมูยอ และส่วนผสม</small></button>
-    </nav>
-
-    <section class="panel active" id="dashboard">
-      <div class="grid kpis">
-        <div class="card kpi"><span>ยอดขายวันนี้</span><strong id="todaySales">0</strong></div>
-        <div class="card kpi"><span>ยอดขายเดือนนี้</span><strong id="monthlySales">0</strong></div>
-        <div class="card kpi"><span>ค่าใช้จ่ายเดือนนี้</span><strong id="monthlyExpenses">0</strong></div>
-        <div class="card kpi"><span>กำไรเดือนนี้</span><strong id="monthlyProfit">0</strong></div>
-        <div class="card kpi"><span>วัตถุดิบต่ำกว่าเกณฑ์</span><strong id="lowStock">0</strong></div>
-        <div class="card kpi"><span>ผลิตวันนี้</span><strong id="productionToday">0</strong></div>
-      </div>
-      <div class="grid two-col">
-        <div class="card">
-          <h2>สต๊อกที่ต้องดูแล</h2>
-          <div class="table-wrap"><table><thead><tr><th>รายการ</th><th>คงเหลือ</th><th>สถานะ</th></tr></thead><tbody id="lowStockTable"></tbody></table></div>
-        </div>
-        <div class="card">
-          <h2>ความเคลื่อนไหวล่าสุด</h2>
-          <div class="table-wrap"><table><thead><tr><th>เวลา</th><th>ประเภท</th><th>รายการ</th><th class="number">จำนวน</th><th>อ้างอิง</th></tr></thead><tbody id="movementTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="receive">
-      <div class="grid two-col">
-        <div class="card">
-          <h2>รับวัตถุดิบ/ของเข้า</h2>
-          <form id="receiveForm">
-            <label>รายการ<select name="item_id" id="receiveItem" required></select></label>
-            <div class="form-row">
-              <label>จำนวน<input name="qty" type="number" min="0.000001" step="0.000001" required></label>
-              <label>หน่วย<input id="receiveUnit" readonly></label>
-            </div>
-            <div class="form-row">
-              <label>ผู้ขาย<input name="supplier" placeholder="ชื่อร้าน/ผู้ส่ง"></label>
-              <label>ต้นทุนต่อหน่วย<input name="unit_cost" type="number" min="0" step="0.01" placeholder="0.00"></label>
-            </div>
-            <label>หมายเหตุ<textarea name="note"></textarea></label>
-            <button class="btn-green" type="submit">บันทึกรับเข้า</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>รายการสต๊อก</h2>
-          <div class="table-wrap"><table><thead><tr><th>รายการ</th><th>หมวด</th><th class="number">คงเหลือ</th><th>หน่วย</th></tr></thead><tbody id="receiveInventoryTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="production">
-      <div class="grid two-col">
-        <div class="card">
-          <h2>ผลิตสินค้า</h2>
-          <form id="productionForm">
-            <label>สินค้า<select name="product_id" id="productionProduct" required></select></label>
-            <div class="form-row">
-              <label>จำนวนชุดผลิต<input name="qty" id="productionQty" type="number" min="0.000001" step="0.000001" value="1" required></label>
-              <label>หน่วยสินค้า<input id="productionUnit" readonly></label>
-            </div>
-            <label>หมายเหตุ<textarea name="note"></textarea></label>
-            <button class="btn-amber" type="submit">บันทึกผลิต</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>วัตถุดิบที่ใช้</h2>
-          <div class="table-wrap"><table><thead><tr><th>วัตถุดิบ</th><th class="number">ต่อชุด</th><th class="number">ต้องใช้</th><th class="number">คงเหลือ</th><th>สถานะ</th></tr></thead><tbody id="productionPreviewTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="sales">
-      <div class="grid two-col">
-        <div class="card">
-          <h2>บันทึกขาย</h2>
-          <form id="salesForm">
-            <label>ช่องทาง/แม่ค้า<input name="vendor_name" id="vendorInput" list="vendorList" value="หน้าร้าน" required><datalist id="vendorList"></datalist></label>
-            <label>สินค้า<select name="product_id" id="saleProduct" required></select></label>
-            <div class="form-row">
-              <label>จำนวนขาย<input name="qty" type="number" min="0.000001" step="0.000001" required></label>
-              <label>ราคาต่อหน่วย<input name="unit_price" type="number" min="0.01" step="0.01" required></label>
-            </div>
-            <label>หมายเหตุ<textarea name="note"></textarea></label>
-            <button class="btn-primary" type="submit">บันทึกขาย</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>ยอดขายล่าสุด</h2>
-          <div class="table-wrap"><table><thead><tr><th>เวลา</th><th>ช่องทาง</th><th>สินค้า</th><th class="number">จำนวน</th><th class="number">รวม</th></tr></thead><tbody id="salesTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="accounting">
-      <div class="grid two-col">
-        <div class="grid">
-          <div class="card">
-            <h2>บันทึกค่าใช้จ่าย</h2>
-            <form id="expenseForm">
-              <label>หมวด<select name="category" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
-              <label>รายละเอียด<input name="description" required></label>
-              <label>ยอดเงิน<input name="amount" type="number" min="0.01" step="0.01" required></label>
-              <label>หมายเหตุ<textarea name="note"></textarea></label>
-              <button class="btn-green" type="submit">บันทึกค่าใช้จ่าย</button>
-            </form>
-          </div>
-          <div class="card">
-            <h2>แก้ไขค่าใช้จ่าย</h2>
-            <form id="expenseEditForm">
-              <label>เลือกรายการ<select name="expense_id" id="expenseEditItem" required></select></label>
-              <label>หมวด<select name="category" id="expenseEditCategory" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
-              <label>รายละเอียด<input name="description" id="expenseEditDescription" required></label>
-              <label>ยอดเงิน<input name="amount" id="expenseEditAmount" type="number" min="0.01" step="0.01" required></label>
-              <label>หมายเหตุ<textarea name="note" id="expenseEditNote"></textarea></label>
-              <button class="btn-amber" type="submit">บันทึกแก้ไข</button>
-            </form>
-          </div>
-        </div>
-        <div class="card">
-          <h2>ค่าใช้จ่ายล่าสุด</h2>
-          <div class="table-wrap"><table><thead><tr><th>เวลา</th><th>หมวด</th><th>รายละเอียด</th><th class="number">ยอดเงิน</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="expensesTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="inventory">
-      <div class="grid two-col">
-        <div class="card">
-          <h2>แก้ไขรายการสต๊อก</h2>
-          <form id="inventoryEditForm">
-            <label>เลือกรายการ<select name="item_id" id="inventoryEditItem" required></select></label>
-            <label>ชื่อรายการ<input name="item_name" id="inventoryEditName" required></label>
-            <div class="form-row">
-              <label>ประเภท<input name="item_type" id="inventoryEditType" required></label>
-              <label>หมวด<input name="category" id="inventoryEditCategory" required></label>
-            </div>
-            <div class="form-row">
-              <label>คงเหลือ<input name="on_hand" id="inventoryEditOnHand" type="number" step="0.000001" required></label>
-              <label>หน่วย<input name="unit" id="inventoryEditUnit" required></label>
-            </div>
-            <div class="form-row">
-              <label>ขั้นต่ำ<input name="reorder_level" id="inventoryEditReorder" type="number" min="0" step="0.000001"></label>
-              <label class="checkbox-row"><input name="active" id="inventoryEditActive" type="checkbox" value="true"> ใช้งาน</label>
-            </div>
-            <p class="editor-note">การแก้ยอดคงเหลือจะบันทึกประวัติปรับสต๊อกให้อัตโนมัติ</p>
-            <button class="btn-green" type="submit">บันทึกแก้ไขสต๊อก</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>สต๊อกทั้งหมด</h2>
-          <div class="table-wrap"><table><thead><tr><th>รายการ</th><th>ประเภท</th><th>หมวด</th><th class="number">คงเหลือ</th><th>หน่วย</th><th class="number">ขั้นต่ำ</th><th>สถานะ</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="recipes">
-      <div class="grid two-col">
-        <div class="card">
-          <h2>แก้ไขสูตรผลิต</h2>
-          <form id="recipeEditForm">
-            <label>เลือกรายการสูตร<select name="recipe_id" id="recipeEditItem" required></select></label>
-            <div class="form-row">
-              <label>สินค้า<input id="recipeEditProduct" readonly></label>
-              <label>วัตถุดิบ<input id="recipeEditIngredient" readonly></label>
-            </div>
-            <div class="form-row">
-              <label>เวอร์ชัน<input name="version" id="recipeEditVersion" required></label>
-              <label>หน่วย<input name="unit" id="recipeEditUnit" required></label>
-            </div>
-            <label>จำนวนต่อชุด<input name="qty_per_batch" id="recipeEditQty" type="number" min="0.000001" step="0.000001" required></label>
-            <button class="btn-amber" type="submit">บันทึกแก้ไขสูตร</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>สูตรผลิต</h2>
-          <div class="table-wrap"><table><thead><tr><th>สินค้า</th><th>เวอร์ชัน</th><th>วัตถุดิบ</th><th class="number">จำนวนต่อชุด</th><th>หน่วย</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="recipeTable"></tbody></table></div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwptw33KUebRlZiwONLAHXaAxcCXF75LDTn577ysZm7CXZoYlzJywKjEuX_vDD2QLV7eA/exec';
-    let appState = { inventory: [], stockItems: [], products: [], recipes: [], vendors: [], recentMovements: [], recentSales: [], recentExpenses: [] };
-    const money = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const qty = new Intl.NumberFormat('th-TH', { maximumFractionDigits: 6 });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      bindTabs();
-      bindForms();
-      document.getElementById('setupBtn').addEventListener('click', () => submitAction('setupDatabase', {}, 'ตั้งค่าฐานข้อมูลแล้ว'));
-      document.getElementById('refreshBtn').addEventListener('click', loadAppData);
-      document.getElementById('receiveItem').addEventListener('change', renderReceiveUnit);
-      document.getElementById('productionProduct').addEventListener('change', renderProductionPreview);
-      document.getElementById('productionQty').addEventListener('input', renderProductionPreview);
-      document.getElementById('inventoryEditItem').addEventListener('change', populateInventoryEditForm);
-      document.getElementById('recipeEditItem').addEventListener('change', populateRecipeEditForm);
-      document.getElementById('expenseEditItem').addEventListener('change', populateExpenseEditForm);
-      document.addEventListener('click', handleEditClick);
-      loadAppData();
-    });
-
-    function bindTabs() {
-      document.querySelectorAll('.tab').forEach((tab) => {
-        tab.addEventListener('click', () => {
-          activateTab(tab.dataset.tab);
-        });
-      });
-    }
-
-    function activateTab(tabId) {
-      document.querySelectorAll('.tab').forEach((item) => item.classList.toggle('active', item.dataset.tab === tabId));
-      document.querySelectorAll('.panel').forEach((panel) => panel.classList.toggle('active', panel.id === tabId));
-      const panel = document.getElementById(tabId);
-      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function bindForms() {
-      document.getElementById('receiveForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await submitAction('receiveStock', formToObject(event.target), 'บันทึกรับเข้าแล้ว');
-        event.target.reset();
-        renderReceiveUnit();
-      });
-      document.getElementById('productionForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = formToObject(event.target);
-        await submitAction('createProduction', data, 'บันทึกผลิตแล้ว');
-      });
-      document.getElementById('salesForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await submitAction('createSale', formToObject(event.target), 'บันทึกขายแล้ว');
-        event.target.reset();
-        document.getElementById('vendorInput').value = 'หน้าร้าน';
-      });
-      document.getElementById('expenseForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await submitAction('createExpense', formToObject(event.target), 'บันทึกค่าใช้จ่ายแล้ว');
-        event.target.reset();
-      });
-      document.getElementById('inventoryEditForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await submitAction('updateInventoryItem', formToObject(event.target), 'แก้ไขรายการสต๊อกแล้ว');
-      });
-      document.getElementById('recipeEditForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await submitAction('updateRecipeItem', formToObject(event.target), 'แก้ไขสูตรแล้ว');
-      });
-      document.getElementById('expenseEditForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await submitAction('updateExpense', formToObject(event.target), 'แก้ไขค่าใช้จ่ายแล้ว');
-      });
-    }
-
-    function api(action, payload = {}) {
-      const callbackName = `meehengApi${Date.now()}${Math.floor(Math.random() * 100000)}`;
-      const params = new URLSearchParams({
-        api: '1',
-        action,
-        payload: JSON.stringify(payload),
-        jsonp: callbackName
-      });
-
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        const timer = window.setTimeout(() => {
-          cleanup();
-          reject(new Error('เชื่อมต่อ backend ไม่สำเร็จ'));
-        }, 90000);
-
-        window[callbackName] = (result) => {
-          cleanup();
-          if (result && result.ok === false) {
-            reject(new Error(result.error || 'backend แจ้งข้อผิดพลาด'));
-            return;
-          }
-          resolve(result);
-        };
-
-        script.onerror = () => {
-          cleanup();
-          reject(new Error('โหลด backend ไม่สำเร็จ'));
-        };
-
-        function cleanup() {
-          window.clearTimeout(timer);
-          delete window[callbackName];
-          script.remove();
-        }
-
-        script.src = `${API_URL}?${params.toString()}`;
-        document.head.appendChild(script);
-      });
-    }
-
-    async function loadAppData(options = {}) {
-      setBusy(true);
-      try {
-        appState = await api('getAppData');
-        renderAll();
-        if (!options.keepMessage) showMessage('', '');
-      } catch (error) {
-        showMessage(error.message || String(error), 'error');
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    async function submitAction(action, payload, successMessage) {
-      setBusy(true);
-      try {
-        await api(action, payload);
-        showMessage(successMessage, 'success');
-        await loadAppData({ keepMessage: true });
-      } catch (error) {
-        showMessage(error.message || String(error), 'error');
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    function renderAll() {
-      renderStatus();
-      renderSummary();
-      renderSelects();
-      renderInventoryTables();
-      renderMovements();
-      renderProductionPreview();
-      renderSales();
-      renderExpenses();
-      renderRecipes();
-    }
-
-    function renderStatus() {
-      const db = appState.database || {};
-      document.getElementById('dbStatus').textContent = db.version ? `DB ${db.version}` : 'พร้อมใช้งาน';
-    }
-
-    function renderSummary() {
-      const summary = appState.summary || {};
-      setText('todaySales', money.format(Number(summary.todaySales || 0)));
-      setText('monthlySales', money.format(Number(summary.monthlySales || 0)));
-      setText('monthlyExpenses', money.format(Number(summary.monthlyExpenses || 0)));
-      setText('monthlyProfit', money.format(Number(summary.monthlyProfit || 0)));
-      setText('lowStock', qty.format(Number(summary.lowStock || 0)));
-      setText('productionToday', qty.format(Number(summary.productionToday || 0)));
-    }
-
-    function renderSelects() {
-      fillSelect(document.getElementById('receiveItem'), appState.stockItems, 'item_id', (item) => `${item.item_name} (${item.unit})`);
-      fillSelect(document.getElementById('productionProduct'), appState.products, 'item_id', (item) => item.item_name);
-      fillSelect(document.getElementById('saleProduct'), appState.products, 'item_id', (item) => `${item.item_name} คงเหลือ ${formatQty(item.on_hand)} ${item.unit}`);
-      fillSelect(document.getElementById('inventoryEditItem'), appState.inventory, 'item_id', (item) => `${item.item_name} (${item.item_id})`);
-      fillSelect(document.getElementById('recipeEditItem'), appState.recipes, 'recipe_id', (recipe) => `${recipe.product_name} - ${recipe.ingredient_name}`);
-      fillSelect(document.getElementById('expenseEditItem'), appState.recentExpenses, 'expense_id', (expense) => `${expense.datetime} - ${expense.description}`);
-      document.getElementById('vendorList').innerHTML = appState.vendors.map((vendor) => `<option value="${escapeHtml(vendor.vendor_name)}"></option>`).join('');
-      renderReceiveUnit();
-      populateInventoryEditForm();
-      populateRecipeEditForm();
-      populateExpenseEditForm();
-    }
-
-    function renderReceiveUnit() {
-      const item = appState.stockItems.find((row) => row.item_id === document.getElementById('receiveItem').value);
-      document.getElementById('receiveUnit').value = item ? item.unit : '';
-    }
-
-    function renderInventoryTables() {
-      const rows = [...appState.inventory].sort((a, b) => {
-        const statusOrder = { out: 0, low: 1, ok: 2 };
-        return (statusOrder[a.status] - statusOrder[b.status]) || String(a.category).localeCompare(String(b.category), 'th');
-      });
-      setHtml('inventoryTable', rows.map((item) => `
-        <tr>
-          <td>${escapeHtml(item.item_name)}</td><td>${escapeHtml(item.item_type)}</td><td>${escapeHtml(item.category)}</td>
-          <td class="number">${formatQty(item.on_hand)}</td><td>${escapeHtml(item.unit)}</td>
-          <td class="number">${formatQty(item.reorder_level)}</td><td>${statusPill(item.status)}</td>
-          <td class="table-actions"><button class="btn-light btn-small" data-edit-inventory="${escapeHtml(item.item_id)}" type="button">แก้ไข</button></td>
-        </tr>`).join(''));
-      setHtml('receiveInventoryTable', rows.filter((item) => item.item_type !== 'finished_good').map((item) => `
-        <tr><td>${escapeHtml(item.item_name)}</td><td>${escapeHtml(item.category)}</td><td class="number">${formatQty(item.on_hand)}</td><td>${escapeHtml(item.unit)}</td></tr>`).join(''));
-      const lowRows = rows.filter((item) => item.status !== 'ok').slice(0, 12);
-      setHtml('lowStockTable', lowRows.length ? lowRows.map((item) => `
-        <tr><td>${escapeHtml(item.item_name)}</td><td class="number">${formatQty(item.on_hand)} ${escapeHtml(item.unit)}</td><td>${statusPill(item.status)}</td></tr>`).join('') : emptyRow(3, 'ยังไม่มีรายการต่ำกว่าเกณฑ์'));
-    }
-
-    function renderMovements() {
-      setHtml('movementTable', appState.recentMovements.length ? appState.recentMovements.map((movement) => `
-        <tr><td>${escapeHtml(movement.datetime)}</td><td>${escapeHtml(movement.type)}</td><td>${escapeHtml(movement.item_name)}</td><td class="number">${formatQty(movement.qty)} ${escapeHtml(movement.unit)}</td><td>${escapeHtml(movement.ref_id || '')}</td></tr>
-      `).join('') : emptyRow(5, 'ยังไม่มีประวัติสต๊อก'));
-    }
-
-    function renderProductionPreview() {
-      const productId = document.getElementById('productionProduct').value;
-      const batches = Number(document.getElementById('productionQty').value || 1);
-      const product = appState.products.find((item) => item.item_id === productId);
-      document.getElementById('productionUnit').value = product ? product.unit : '';
-      const recipeRows = appState.recipes.filter((recipe) => recipe.product_id === productId);
-      if (!productId || !recipeRows.length) {
-        setHtml('productionPreviewTable', emptyRow(5, productId ? 'ยังไม่มีสูตร' : 'ยังไม่มีสินค้า'));
-        return;
-      }
-      setHtml('productionPreviewTable', recipeRows.map((recipe) => {
-        const item = appState.inventory.find((inventoryItem) => inventoryItem.item_id === recipe.ingredient_id) || {};
-        const required = Number(recipe.qty_per_batch || 0) * batches;
-        const onHand = Number(item.on_hand || 0);
-        return `<tr><td>${escapeHtml(recipe.ingredient_name)}</td><td class="number">${formatQty(recipe.qty_per_batch)} ${escapeHtml(recipe.unit)}</td><td class="number">${formatQty(required)} ${escapeHtml(recipe.unit)}</td><td class="number">${formatQty(onHand)} ${escapeHtml(recipe.unit)}</td><td>${statusPill(onHand >= required ? 'ok' : 'out')}</td></tr>`;
-      }).join(''));
-    }
-
-    function renderSales() {
-      setHtml('salesTable', appState.recentSales.length ? appState.recentSales.map((sale) => `
-        <tr><td>${escapeHtml(sale.datetime)}</td><td>${escapeHtml(sale.vendor_name)}</td><td>${escapeHtml(sale.product_name)}</td><td class="number">${formatQty(sale.qty)} ${escapeHtml(sale.unit)}</td><td class="number">${money.format(Number(sale.total || 0))}</td></tr>
-      `).join('') : emptyRow(5, 'ยังไม่มียอดขาย'));
-    }
-
-    function renderExpenses() {
-      setHtml('expensesTable', appState.recentExpenses.length ? appState.recentExpenses.map((expense) => `
-        <tr><td>${escapeHtml(expense.datetime)}</td><td>${escapeHtml(expense.category)}</td><td>${escapeHtml(expense.description)}</td><td class="number">${money.format(Number(expense.amount || 0))}</td><td class="table-actions"><button class="btn-light btn-small" data-edit-expense="${escapeHtml(expense.expense_id)}" type="button">แก้ไข</button></td></tr>
-      `).join('') : emptyRow(5, 'ยังไม่มีค่าใช้จ่าย'));
-    }
-
-    function renderRecipes() {
-      setHtml('recipeTable', appState.recipes.map((recipe) => `
-        <tr><td>${escapeHtml(recipe.product_name)}</td><td>${escapeHtml(recipe.version)}</td><td>${escapeHtml(recipe.ingredient_name)}</td><td class="number">${formatQty(recipe.qty_per_batch)}</td><td>${escapeHtml(recipe.unit)}</td><td class="table-actions"><button class="btn-light btn-small" data-edit-recipe="${escapeHtml(recipe.recipe_id)}" type="button">แก้ไข</button></td></tr>
-      `).join(''));
-    }
-
-    function populateInventoryEditForm() {
-      const item = appState.inventory.find((row) => row.item_id === document.getElementById('inventoryEditItem').value);
-      if (!item) return;
-      document.getElementById('inventoryEditName').value = item.item_name || '';
-      document.getElementById('inventoryEditType').value = item.item_type || '';
-      document.getElementById('inventoryEditCategory').value = item.category || '';
-      document.getElementById('inventoryEditOnHand').value = item.on_hand || 0;
-      document.getElementById('inventoryEditUnit').value = item.unit || '';
-      document.getElementById('inventoryEditReorder').value = item.reorder_level || 0;
-      document.getElementById('inventoryEditActive').checked = item.active !== false;
-    }
-
-    function populateRecipeEditForm() {
-      const recipe = appState.recipes.find((row) => row.recipe_id === document.getElementById('recipeEditItem').value);
-      if (!recipe) return;
-      document.getElementById('recipeEditProduct').value = recipe.product_name || '';
-      document.getElementById('recipeEditIngredient').value = recipe.ingredient_name || '';
-      document.getElementById('recipeEditVersion').value = recipe.version || '';
-      document.getElementById('recipeEditUnit').value = recipe.unit || '';
-      document.getElementById('recipeEditQty').value = recipe.qty_per_batch || 0;
-    }
-
-    function populateExpenseEditForm() {
-      const expense = appState.recentExpenses.find((row) => row.expense_id === document.getElementById('expenseEditItem').value);
-      if (!expense) return;
-      document.getElementById('expenseEditCategory').value = expense.category || 'ทั่วไป';
-      document.getElementById('expenseEditDescription').value = expense.description || '';
-      document.getElementById('expenseEditAmount').value = expense.amount || 0;
-      document.getElementById('expenseEditNote').value = expense.note || '';
-    }
-
-    function handleEditClick(event) {
-      const inventoryButton = event.target.closest('[data-edit-inventory]');
-      if (inventoryButton) {
-        activateTab('inventory');
-        document.getElementById('inventoryEditItem').value = inventoryButton.dataset.editInventory;
-        populateInventoryEditForm();
-        document.getElementById('inventoryEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      }
-
-      const recipeButton = event.target.closest('[data-edit-recipe]');
-      if (recipeButton) {
-        activateTab('recipes');
-        document.getElementById('recipeEditItem').value = recipeButton.dataset.editRecipe;
-        populateRecipeEditForm();
-        document.getElementById('recipeEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      }
-
-      const expenseButton = event.target.closest('[data-edit-expense]');
-      if (expenseButton) {
-        activateTab('accounting');
-        document.getElementById('expenseEditItem').value = expenseButton.dataset.editExpense;
-        populateExpenseEditForm();
-        document.getElementById('expenseEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-
-    function fillSelect(select, rows, valueKey, labelFn) {
-      const currentValue = select.value;
-      select.innerHTML = rows.map((row) => `<option value="${escapeHtml(row[valueKey])}">${escapeHtml(labelFn(row))}</option>`).join('');
-      if (rows.some((row) => row[valueKey] === currentValue)) select.value = currentValue;
-    }
-
-    function formToObject(form) {
-      const data = {};
-      new FormData(form).forEach((value, key) => { data[key] = value; });
-      form.querySelectorAll('input[type="checkbox"][name]').forEach((input) => {
-        data[input.name] = input.checked ? (input.value || 'true') : 'false';
-      });
-      return data;
-    }
-
-    function statusPill(status) {
-      const label = status === 'ok' ? 'ปกติ' : status === 'low' ? 'ต่ำ' : 'หมด/ไม่พอ';
-      return `<span class="pill ${status}">${label}</span>`;
-    }
-
-    function formatQty(value) { return qty.format(Number(value || 0)); }
-    function setText(id, value) { document.getElementById(id).textContent = value; }
-    function setHtml(id, value) { document.getElementById(id).innerHTML = value; }
-    function emptyRow(columns, text) { return `<tr><td class="muted" colspan="${columns}">${escapeHtml(text)}</td></tr>`; }
-    function setBusy(isBusy) {
-      document.querySelectorAll('button').forEach((button) => { button.disabled = isBusy || button.dataset.permanentDisabled === 'true'; });
-      document.getElementById('dbStatus').textContent = isBusy ? 'กำลังทำงาน' : ((appState.database && appState.database.version) ? `DB ${appState.database.version}` : 'พร้อมใช้งาน');
-    }
-    function showMessage(text, type) {
-      document.getElementById('message').innerHTML = text ? `<div class="notice ${type || ''}">${escapeHtml(text)}</div>` : '';
-    }
-    function escapeHtml(value) {
-      return String(value === undefined || value === null ? '' : value)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-    }
-  </script>
-  <script src="./assistant.js?v=20260602-1"></script>
+<header>
+<div class="topbar">
+<div class="bell" aria-hidden="true">🔔</div>
+<div class="center">
+<img class="logo" src="https://raw.githubusercontent.com/Ruchayanee/meeheng-erp/main/assets/IMG_3283_TRANSPARENT.png" alt="Mee Heng Food">
+<h1>Mee Heng Food</h1>
+<p class="subtitle">Super App Management System</p>
+</div>
+<div class="actions">
+<span class="status" id="dbStatus">กำลังโหลด</span>
+<button class="btn-light" id="setupBtn" type="button">ตั้งค่าฐานข้อมูล</button>
+<button class="btn-primary" id="refreshBtn" type="button">รีเฟรช</button>
+</div>
+</div>
+</header>
+<main>
+<div id="message"></div>
+<nav class="tabs" aria-label="Main menu">
+<button class="tab active" data-tab="dashboard" type="button"><strong>📊 Dashboard</strong><small>ภาพรวมวันนี้และเดือนนี้</small></button>
+<button class="tab" data-tab="receive" type="button"><strong>📥 รับเข้า</strong><small>บันทึกวัตถุดิบและของเข้า</small></button>
+<button class="tab" data-tab="production" type="button"><strong>🥣 ผลิต</strong><small>ตัดวัตถุดิบตามสูตร</small></button>
+<button class="tab" data-tab="sales" type="button"><strong>🛒 ขาย</strong><small>บันทึกยอดขายหน้าร้านและแม่ค้า</small></button>
+<button class="tab" data-tab="accounting" type="button"><strong>💰 บัญชี</strong><small>ค่าใช้จ่ายและกำไร</small></button>
+<button class="tab" data-tab="inventory" type="button"><strong>📦 สต๊อก</strong><small>ตรวจคงเหลือทั้งหมด</small></button>
+<button class="tab" data-tab="recipes" type="button"><strong>🧾 สูตร</strong><small>ลูกชิ้น หมูยอ และส่วนผสม</small></button>
+</nav>
+<section class="panel active" id="dashboard">
+<div class="grid kpis">
+<div class="card kpi"><span>ยอดขายวันนี้</span><strong id="todaySales">0</strong></div>
+<div class="card kpi"><span>ยอดขายเดือนนี้</span><strong id="monthlySales">0</strong></div>
+<div class="card kpi"><span>ค่าใช้จ่ายเดือนนี้</span><strong id="monthlyExpenses">0</strong></div>
+<div class="card kpi"><span>กำไรเดือนนี้</span><strong id="monthlyProfit">0</strong></div>
+<div class="card kpi"><span>วัตถุดิบต่ำกว่าเกณฑ์</span><strong id="lowStock">0</strong></div>
+<div class="card kpi"><span>ผลิตวันนี้</span><strong id="productionToday">0</strong></div>
+</div>
+<div class="grid two-col">
+<div class="card">
+<h2>สต๊อกที่ต้องดูแล</h2>
+<div class="table-wrap"><table><thead><tr><th>รายการ</th><th>คงเหลือ</th><th>สถานะ</th></tr></thead><tbody id="lowStockTable"></tbody></table></div>
+</div>
+<div class="card">
+<h2>ความเคลื่อนไหวล่าสุด</h2>
+<div class="table-wrap"><table><thead><tr><th>เวลา</th><th>ประเภท</th><th>รายการ</th><th class="number">จำนวน</th><th>อ้างอิง</th></tr></thead><tbody id="movementTable"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="panel" id="receive">
+<div class="grid two-col">
+<div class="card">
+<h2>รับวัตถุดิบ/ของเข้า</h2>
+<form id="receiveForm">
+<label>รายการ<select name="item_id" id="receiveItem" required></select></label>
+<div class="form-row">
+<label>จำนวน<input name="qty" type="number" min="0.000001" step="0.000001" required></label>
+<label>หน่วย<input id="receiveUnit" readonly></label>
+</div>
+<div class="form-row">
+<label>ผู้ขาย<input name="supplier" placeholder="ชื่อร้าน/ผู้ส่ง"></label>
+<label>ต้นทุนต่อหน่วย<input name="unit_cost" type="number" min="0" step="0.01" placeholder="0.00"></label>
+</div>
+<label>หมายเหตุ<textarea name="note"></textarea></label>
+<button class="btn-green" type="submit">บันทึกรับเข้า</button>
+</form>
+</div>
+<div class="card">
+<h2>รายการสต๊อก</h2>
+<div class="table-wrap"><table><thead><tr><th>รายการ</th><th>หมวด</th><th class="number">คงเหลือ</th><th>หน่วย</th></tr></thead><tbody id="receiveInventoryTable"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="panel" id="production">
+<div class="grid two-col">
+<div class="card">
+<h2>ผลิตสินค้า</h2>
+<form id="productionForm">
+<label>สินค้า<select name="product_id" id="productionProduct" required></select></label>
+<div class="form-row">
+<label>จำนวนชุดผลิต<input name="qty" id="productionQty" type="number" min="0.000001" step="0.000001" value="1" required></label>
+<label>หน่วยสินค้า<input id="productionUnit" readonly></label>
+</div>
+<label>หมายเหตุ<textarea name="note"></textarea></label>
+<button class="btn-amber" type="submit">บันทึกผลิต</button>
+</form>
+</div>
+<div class="card">
+<h2>วัตถุดิบที่ใช้</h2>
+<div class="table-wrap"><table><thead><tr><th>วัตถุดิบ</th><th class="number">ต่อชุด</th><th class="number">ต้องใช้</th><th class="number">คงเหลือ</th><th>สถานะ</th></tr></thead><tbody id="productionPreviewTable"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="panel" id="sales">
+<div class="grid two-col">
+<div class="card">
+<h2>บันทึกขาย</h2>
+<form id="salesForm">
+<label>ช่องทาง/แม่ค้า<input name="vendor_name" id="vendorInput" list="vendorList" value="หน้าร้าน" required><datalist id="vendorList"></datalist></label>
+<label>สินค้า<select name="product_id" id="saleProduct" required></select></label>
+<div class="form-row">
+<label>จำนวนขาย<input name="qty" type="number" min="0.000001" step="0.000001" required></label>
+<label>ราคาต่อหน่วย<input name="unit_price" type="number" min="0.01" step="0.01" required></label>
+</div>
+<label>หมายเหตุ<textarea name="note"></textarea></label>
+<button class="btn-primary" type="submit">บันทึกขาย</button>
+</form>
+</div>
+<div class="card">
+<h2>ยอดขายล่าสุด</h2>
+<div class="table-wrap"><table><thead><tr><th>เวลา</th><th>ช่องทาง</th><th>สินค้า</th><th class="number">จำนวน</th><th class="number">รวม</th></tr></thead><tbody id="salesTable"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="panel" id="accounting">
+<div class="grid two-col">
+<div class="grid">
+<div class="card">
+<h2>บันทึกค่าใช้จ่าย</h2>
+<form id="expenseForm">
+<label>หมวด<select name="category" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
+<label>รายละเอียด<input name="description" required></label>
+<label>ยอดเงิน<input name="amount" type="number" min="0.01" step="0.01" required></label>
+<label>หมายเหตุ<textarea name="note"></textarea></label>
+<button class="btn-green" type="submit">บันทึกค่าใช้จ่าย</button>
+</form>
+</div>
+<div class="card">
+<h2>แก้ไขค่าใช้จ่าย</h2>
+<form id="expenseEditForm">
+<label>เลือกรายการ<select name="expense_id" id="expenseEditItem" required></select></label>
+<label>หมวด<select name="category" id="expenseEditCategory" required><option>ค่าแก๊ส</option><option>ค่าแผง</option><option>ค่าแรง</option><option>ค่าขนส่ง</option><option>ซื้อวัตถุดิบ/สินค้า</option><option>ทั่วไป</option></select></label>
+<label>รายละเอียด<input name="description" id="expenseEditDescription" required></label>
+<label>ยอดเงิน<input name="amount" id="expenseEditAmount" type="number" min="0.01" step="0.01" required></label>
+<label>หมายเหตุ<textarea name="note" id="expenseEditNote"></textarea></label>
+<button class="btn-amber" type="submit">บันทึกแก้ไข</button>
+</form>
+</div>
+</div>
+<div class="card">
+<h2>ค่าใช้จ่ายล่าสุด</h2>
+<div class="table-wrap"><table><thead><tr><th>เวลา</th><th>หมวด</th><th>รายละเอียด</th><th class="number">ยอดเงิน</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="expensesTable"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="panel" id="inventory">
+<div class="grid two-col">
+<div class="card">
+<h2>แก้ไขรายการสต๊อก</h2>
+<form id="inventoryEditForm">
+<label>เลือกรายการ<select name="item_id" id="inventoryEditItem" required></select></label>
+<label>ชื่อรายการ<input name="item_name" id="inventoryEditName" required></label>
+<div class="form-row">
+<label>ประเภท<input name="item_type" id="inventoryEditType" required></label>
+<label>หมวด<input name="category" id="inventoryEditCategory" required></label>
+</div>
+<div class="form-row">
+<label>คงเหลือ<input name="on_hand" id="inventoryEditOnHand" type="number" step="0.000001" required></label>
+<label>หน่วย<input name="unit" id="inventoryEditUnit" required></label>
+</div>
+<div class="form-row">
+<label>ขั้นต่ำ<input name="reorder_level" id="inventoryEditReorder" type="number" min="0" step="0.000001"></label>
+<label class="checkbox-row"><input name="active" id="inventoryEditActive" type="checkbox" value="true"> ใช้งาน</label>
+</div>
+<p class="editor-note">การแก้ยอดคงเหลือจะบันทึกประวัติปรับสต๊อกให้อัตโนมัติ</p>
+<button class="btn-green" type="submit">บันทึกแก้ไขสต๊อก</button>
+</form>
+</div>
+<div class="card">
+<h2>สต๊อกทั้งหมด</h2>
+<div class="table-wrap"><table><thead><tr><th>รายการ</th><th>ประเภท</th><th>หมวด</th><th class="number">คงเหลือ</th><th>หน่วย</th><th class="number">ขั้นต่ำ</th><th>สถานะ</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="panel" id="recipes">
+<div class="grid two-col">
+<div class="card">
+<h2>แก้ไขสูตรผลิต</h2>
+<form id="recipeEditForm">
+<label>เลือกรายการสูตร<select name="recipe_id" id="recipeEditItem" required></select></label>
+<div class="form-row">
+<label>สินค้า<input id="recipeEditProduct" readonly></label>
+<label>วัตถุดิบ<input id="recipeEditIngredient" readonly></label>
+</div>
+<div class="form-row">
+<label>เวอร์ชัน<input name="version" id="recipeEditVersion" required></label>
+<label>หน่วย<input name="unit" id="recipeEditUnit" required></label>
+</div>
+<label>จำนวนต่อชุด<input name="qty_per_batch" id="recipeEditQty" type="number" min="0.000001" step="0.000001" required></label>
+<button class="btn-amber" type="submit">บันทึกแก้ไขสูตร</button>
+</form>
+</div>
+<div class="card">
+<h2>สูตรผลิต</h2>
+<div class="table-wrap"><table><thead><tr><th>สินค้า</th><th>เวอร์ชัน</th><th>วัตถุดิบ</th><th class="number">จำนวนต่อชุด</th><th>หน่วย</th><th class="table-actions">แก้ไข</th></tr></thead><tbody id="recipeTable"></tbody></table></div>
+</div>
+</div>
+</section>
+</main>
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbwptw33KUebRlZiwONLAHXaAxcCXF75LDTn577ysZm7CXZoYlzJywKjEuX_vDD2QLV7eA/exec';
+let appState = { inventory: [], stockItems: [], products: [], recipes: [], vendors: [], recentMovements: [], recentSales: [], recentExpenses: [] };
+const money = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const qty = new Intl.NumberFormat('th-TH', { maximumFractionDigits: 6 });
+document.addEventListener('DOMContentLoaded', () => {
+bindTabs();
+bindForms();
+document.getElementById('setupBtn').addEventListener('click', () => submitAction('setupDatabase', {}, 'ตั้งค่าฐานข้อมูลแล้ว'));
+document.getElementById('refreshBtn').addEventListener('click', loadAppData);
+document.getElementById('receiveItem').addEventListener('change', renderReceiveUnit);
+document.getElementById('productionProduct').addEventListener('change', renderProductionPreview);
+document.getElementById('productionQty').addEventListener('input', renderProductionPreview);
+document.getElementById('inventoryEditItem').addEventListener('change', populateInventoryEditForm);
+document.getElementById('recipeEditItem').addEventListener('change', populateRecipeEditForm);
+document.getElementById('expenseEditItem').addEventListener('change', populateExpenseEditForm);
+document.addEventListener('click', handleEditClick);
+loadAppData();
+});
+function bindTabs() {
+document.querySelectorAll('.tab').forEach((tab) => {
+tab.addEventListener('click', () => {
+activateTab(tab.dataset.tab);
+});
+});
+}
+function activateTab(tabId) {
+document.querySelectorAll('.tab').forEach((item) => item.classList.toggle('active', item.dataset.tab === tabId));
+document.querySelectorAll('.panel').forEach((panel) => panel.classList.toggle('active', panel.id === tabId));
+const panel = document.getElementById(tabId);
+if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function bindForms() {
+document.getElementById('receiveForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+await submitAction('receiveStock', formToObject(event.target), 'บันทึกรับเข้าแล้ว');
+event.target.reset();
+renderReceiveUnit();
+});
+document.getElementById('productionForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+const data = formToObject(event.target);
+await submitAction('createProduction', data, 'บันทึกผลิตแล้ว');
+});
+document.getElementById('salesForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+await submitAction('createSale', formToObject(event.target), 'บันทึกขายแล้ว');
+event.target.reset();
+document.getElementById('vendorInput').value = 'หน้าร้าน';
+});
+document.getElementById('expenseForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+await submitAction('createExpense', formToObject(event.target), 'บันทึกค่าใช้จ่ายแล้ว');
+event.target.reset();
+});
+document.getElementById('inventoryEditForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+await submitAction('updateInventoryItem', formToObject(event.target), 'แก้ไขรายการสต๊อกแล้ว');
+});
+document.getElementById('recipeEditForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+await submitAction('updateRecipeItem', formToObject(event.target), 'แก้ไขสูตรแล้ว');
+});
+document.getElementById('expenseEditForm').addEventListener('submit', async (event) => {
+event.preventDefault();
+await submitAction('updateExpense', formToObject(event.target), 'แก้ไขค่าใช้จ่ายแล้ว');
+});
+}
+function api(action, payload = {}) {
+const callbackName = `meehengApi${Date.now()}${Math.floor(Math.random() * 100000)}`;
+const params = new URLSearchParams({
+api: '1',
+action,
+payload: JSON.stringify(payload),
+jsonp: callbackName
+});
+return new Promise((resolve, reject) => {
+const script = document.createElement('script');
+const timer = window.setTimeout(() => {
+cleanup();
+reject(new Error('เชื่อมต่อ backend ไม่สำเร็จ'));
+}, 90000);
+window[callbackName] = (result) => {
+cleanup();
+if (result && result.ok === false) {
+reject(new Error(result.error || 'backend แจ้งข้อผิดพลาด'));
+return;
+}
+resolve(result);
+};
+script.onerror = () => {
+cleanup();
+reject(new Error('โหลด backend ไม่สำเร็จ'));
+};
+function cleanup() {
+window.clearTimeout(timer);
+delete window[callbackName];
+script.remove();
+}
+script.src = `${API_URL}?${params.toString()}`;
+document.head.appendChild(script);
+});
+}
+async function loadAppData(options = {}) {
+setBusy(true);
+try {
+appState = await api('getAppData');
+renderAll();
+if (!options.keepMessage) showMessage('', '');
+} catch (error) {
+showMessage(error.message || String(error), 'error');
+} finally {
+setBusy(false);
+}
+}
+async function submitAction(action, payload, successMessage) {
+setBusy(true);
+try {
+await api(action, payload);
+showMessage(successMessage, 'success');
+await loadAppData({ keepMessage: true });
+} catch (error) {
+showMessage(error.message || String(error), 'error');
+} finally {
+setBusy(false);
+}
+}
+function renderAll() {
+renderStatus();
+renderSummary();
+renderSelects();
+renderInventoryTables();
+renderMovements();
+renderProductionPreview();
+renderSales();
+renderExpenses();
+renderRecipes();
+}
+function renderStatus() {
+const db = appState.database || {};
+document.getElementById('dbStatus').textContent = db.version ? `DB ${db.version}` : 'พร้อมใช้งาน';
+}
+function renderSummary() {
+const summary = appState.summary || {};
+setText('todaySales', money.format(Number(summary.todaySales || 0)));
+setText('monthlySales', money.format(Number(summary.monthlySales || 0)));
+setText('monthlyExpenses', money.format(Number(summary.monthlyExpenses || 0)));
+setText('monthlyProfit', money.format(Number(summary.monthlyProfit || 0)));
+setText('lowStock', qty.format(Number(summary.lowStock || 0)));
+setText('productionToday', qty.format(Number(summary.productionToday || 0)));
+}
+function renderSelects() {
+fillSelect(document.getElementById('receiveItem'), appState.stockItems, 'item_id', (item) => `${item.item_name} (${item.unit})`);
+fillSelect(document.getElementById('productionProduct'), appState.products, 'item_id', (item) => item.item_name);
+fillSelect(document.getElementById('saleProduct'), appState.products, 'item_id', (item) => `${item.item_name} คงเหลือ ${formatQty(item.on_hand)} ${item.unit}`);
+fillSelect(document.getElementById('inventoryEditItem'), appState.inventory, 'item_id', (item) => `${item.item_name} (${item.item_id})`);
+fillSelect(document.getElementById('recipeEditItem'), appState.recipes, 'recipe_id', (recipe) => `${recipe.product_name} - ${recipe.ingredient_name}`);
+fillSelect(document.getElementById('expenseEditItem'), appState.recentExpenses, 'expense_id', (expense) => `${expense.datetime} - ${expense.description}`);
+document.getElementById('vendorList').innerHTML = appState.vendors.map((vendor) => `<option value="${escapeHtml(vendor.vendor_name)}"></option>`).join('');
+renderReceiveUnit();
+populateInventoryEditForm();
+populateRecipeEditForm();
+populateExpenseEditForm();
+}
+function renderReceiveUnit() {
+const item = appState.stockItems.find((row) => row.item_id === document.getElementById('receiveItem').value);
+document.getElementById('receiveUnit').value = item ? item.unit : '';
+}
+function renderInventoryTables() {
+const rows = [...appState.inventory].sort((a, b) => {
+const statusOrder = { out: 0, low: 1, ok: 2 };
+return (statusOrder[a.status] - statusOrder[b.status]) || String(a.category).localeCompare(String(b.category), 'th');
+});
+setHtml('inventoryTable', rows.map((item) => `
+<tr>
+<td>${escapeHtml(item.item_name)}</td><td>${escapeHtml(item.item_type)}</td><td>${escapeHtml(item.category)}</td>
+<td class="number">${formatQty(item.on_hand)}</td><td>${escapeHtml(item.unit)}</td>
+<td class="number">${formatQty(item.reorder_level)}</td><td>${statusPill(item.status)}</td>
+<td class="table-actions"><button class="btn-light btn-small" data-edit-inventory="${escapeHtml(item.item_id)}" type="button">แก้ไข</button></td>
+</tr>`).join(''));
+setHtml('receiveInventoryTable', rows.filter((item) => item.item_type !== 'finished_good').map((item) => `
+<tr><td>${escapeHtml(item.item_name)}</td><td>${escapeHtml(item.category)}</td><td class="number">${formatQty(item.on_hand)}</td><td>${escapeHtml(item.unit)}</td></tr>`).join(''));
+const lowRows = rows.filter((item) => item.status !== 'ok').slice(0, 12);
+setHtml('lowStockTable', lowRows.length ? lowRows.map((item) => `
+<tr><td>${escapeHtml(item.item_name)}</td><td class="number">${formatQty(item.on_hand)} ${escapeHtml(item.unit)}</td><td>${statusPill(item.status)}</td></tr>`).join('') : emptyRow(3, 'ยังไม่มีรายการต่ำกว่าเกณฑ์'));
+}
+function renderMovements() {
+setHtml('movementTable', appState.recentMovements.length ? appState.recentMovements.map((movement) => `
+<tr><td>${escapeHtml(movement.datetime)}</td><td>${escapeHtml(movement.type)}</td><td>${escapeHtml(movement.item_name)}</td><td class="number">${formatQty(movement.qty)} ${escapeHtml(movement.unit)}</td><td>${escapeHtml(movement.ref_id || '')}</td></tr>
+`).join('') : emptyRow(5, 'ยังไม่มีประวัติสต๊อก'));
+}
+function renderProductionPreview() {
+const productId = document.getElementById('productionProduct').value;
+const batches = Number(document.getElementById('productionQty').value || 1);
+const product = appState.products.find((item) => item.item_id === productId);
+document.getElementById('productionUnit').value = product ? product.unit : '';
+const recipeRows = appState.recipes.filter((recipe) => recipe.product_id === productId);
+if (!productId || !recipeRows.length) {
+setHtml('productionPreviewTable', emptyRow(5, productId ? 'ยังไม่มีสูตร' : 'ยังไม่มีสินค้า'));
+return;
+}
+setHtml('productionPreviewTable', recipeRows.map((recipe) => {
+const item = appState.inventory.find((inventoryItem) => inventoryItem.item_id === recipe.ingredient_id) || {};
+const required = Number(recipe.qty_per_batch || 0) * batches;
+const onHand = Number(item.on_hand || 0);
+return `<tr><td>${escapeHtml(recipe.ingredient_name)}</td><td class="number">${formatQty(recipe.qty_per_batch)} ${escapeHtml(recipe.unit)}</td><td class="number">${formatQty(required)} ${escapeHtml(recipe.unit)}</td><td class="number">${formatQty(onHand)} ${escapeHtml(recipe.unit)}</td><td>${statusPill(onHand >= required ? 'ok' : 'out')}</td></tr>`;
+}).join(''));
+}
+function renderSales() {
+setHtml('salesTable', appState.recentSales.length ? appState.recentSales.map((sale) => `
+<tr><td>${escapeHtml(sale.datetime)}</td><td>${escapeHtml(sale.vendor_name)}</td><td>${escapeHtml(sale.product_name)}</td><td class="number">${formatQty(sale.qty)} ${escapeHtml(sale.unit)}</td><td class="number">${money.format(Number(sale.total || 0))}</td></tr>
+`).join('') : emptyRow(5, 'ยังไม่มียอดขาย'));
+}
+function renderExpenses() {
+setHtml('expensesTable', appState.recentExpenses.length ? appState.recentExpenses.map((expense) => `
+<tr><td>${escapeHtml(expense.datetime)}</td><td>${escapeHtml(expense.category)}</td><td>${escapeHtml(expense.description)}</td><td class="number">${money.format(Number(expense.amount || 0))}</td><td class="table-actions"><button class="btn-light btn-small" data-edit-expense="${escapeHtml(expense.expense_id)}" type="button">แก้ไข</button></td></tr>
+`).join('') : emptyRow(5, 'ยังไม่มีค่าใช้จ่าย'));
+}
+function renderRecipes() {
+setHtml('recipeTable', appState.recipes.map((recipe) => `
+<tr><td>${escapeHtml(recipe.product_name)}</td><td>${escapeHtml(recipe.version)}</td><td>${escapeHtml(recipe.ingredient_name)}</td><td class="number">${formatQty(recipe.qty_per_batch)}</td><td>${escapeHtml(recipe.unit)}</td><td class="table-actions"><button class="btn-light btn-small" data-edit-recipe="${escapeHtml(recipe.recipe_id)}" type="button">แก้ไข</button></td></tr>
+`).join(''));
+}
+function populateInventoryEditForm() {
+const item = appState.inventory.find((row) => row.item_id === document.getElementById('inventoryEditItem').value);
+if (!item) return;
+document.getElementById('inventoryEditName').value = item.item_name || '';
+document.getElementById('inventoryEditType').value = item.item_type || '';
+document.getElementById('inventoryEditCategory').value = item.category || '';
+document.getElementById('inventoryEditOnHand').value = item.on_hand || 0;
+document.getElementById('inventoryEditUnit').value = item.unit || '';
+document.getElementById('inventoryEditReorder').value = item.reorder_level || 0;
+document.getElementById('inventoryEditActive').checked = item.active !== false;
+}
+function populateRecipeEditForm() {
+const recipe = appState.recipes.find((row) => row.recipe_id === document.getElementById('recipeEditItem').value);
+if (!recipe) return;
+document.getElementById('recipeEditProduct').value = recipe.product_name || '';
+document.getElementById('recipeEditIngredient').value = recipe.ingredient_name || '';
+document.getElementById('recipeEditVersion').value = recipe.version || '';
+document.getElementById('recipeEditUnit').value = recipe.unit || '';
+document.getElementById('recipeEditQty').value = recipe.qty_per_batch || 0;
+}
+function populateExpenseEditForm() {
+const expense = appState.recentExpenses.find((row) => row.expense_id === document.getElementById('expenseEditItem').value);
+if (!expense) return;
+document.getElementById('expenseEditCategory').value = expense.category || 'ทั่วไป';
+document.getElementById('expenseEditDescription').value = expense.description || '';
+document.getElementById('expenseEditAmount').value = expense.amount || 0;
+document.getElementById('expenseEditNote').value = expense.note || '';
+}
+function handleEditClick(event) {
+const inventoryButton = event.target.closest('[data-edit-inventory]');
+if (inventoryButton) {
+activateTab('inventory');
+document.getElementById('inventoryEditItem').value = inventoryButton.dataset.editInventory;
+populateInventoryEditForm();
+document.getElementById('inventoryEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+return;
+}
+const recipeButton = event.target.closest('[data-edit-recipe]');
+if (recipeButton) {
+activateTab('recipes');
+document.getElementById('recipeEditItem').value = recipeButton.dataset.editRecipe;
+populateRecipeEditForm();
+document.getElementById('recipeEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+return;
+}
+const expenseButton = event.target.closest('[data-edit-expense]');
+if (expenseButton) {
+activateTab('accounting');
+document.getElementById('expenseEditItem').value = expenseButton.dataset.editExpense;
+populateExpenseEditForm();
+document.getElementById('expenseEditForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+}
+function fillSelect(select, rows, valueKey, labelFn) {
+const currentValue = select.value;
+select.innerHTML = rows.map((row) => `<option value="${escapeHtml(row[valueKey])}">${escapeHtml(labelFn(row))}</option>`).join('');
+if (rows.some((row) => row[valueKey] === currentValue)) select.value = currentValue;
+}
+function formToObject(form) {
+const data = {};
+new FormData(form).forEach((value, key) => { data[key] = value; });
+form.querySelectorAll('input[type="checkbox"][name]').forEach((input) => {
+data[input.name] = input.checked ? (input.value || 'true') : 'false';
+});
+return data;
+}
+function statusPill(status) {
+const label = status === 'ok' ? 'ปกติ' : status === 'low' ? 'ต่ำ' : 'หมด/ไม่พอ';
+return `<span class="pill ${status}">${label}</span>`;
+}
+function formatQty(value) { return qty.format(Number(value || 0)); }
+function setText(id, value) { document.getElementById(id).textContent = value; }
+function setHtml(id, value) { document.getElementById(id).innerHTML = value; }
+function emptyRow(columns, text) { return `<tr><td class="muted" colspan="${columns}">${escapeHtml(text)}</td></tr>`; }
+function setBusy(isBusy) {
+document.querySelectorAll('button').forEach((button) => { button.disabled = isBusy || button.dataset.permanentDisabled === 'true'; });
+document.getElementById('dbStatus').textContent = isBusy ? 'กำลังทำงาน' : ((appState.database && appState.database.version) ? `DB ${appState.database.version}` : 'พร้อมใช้งาน');
+}
+function showMessage(text, type) {
+document.getElementById('message').innerHTML = text ? `<div class="notice ${type || ''}">${escapeHtml(text)}</div>` : '';
+}
+function escapeHtml(value) {
+return String(value === undefined || value === null ? '' : value)
+.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+</script>
+<script src="./assistant.js?v=20260603-1"></script>
 </body>
 </html>
