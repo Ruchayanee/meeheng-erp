@@ -121,7 +121,7 @@ function getAssistantResponse(rawQuery) {
   const product = findProductInQuery(query);
   const inventoryItem = findInventoryItemInQuery(query);
   const requestedBatches = getRequestedBatchCount(query);
-  const productPlanIntent = product && includesAny(query, ['ผลิต', 'ทำ', 'พอไหม', 'พอหรือไม่', 'กี่ชุด', 'ขาดอะไร', 'ต้องซื้อ', 'ควรซื้อ', 'ซื้ออะไร', 'เติมอะไร', 'ต้องเติม', 'วางแผน', 'แผนผลิต', 'วัตถุดิบ', 'ถ้า']);
+  const productPlanIntent = product && (requestedBatches > 0 || includesAny(query, ['ผลิต', 'ทำ', 'พอไหม', 'พอหรือไม่', 'กี่ชุด', 'ขาดอะไร', 'ต้องซื้อ', 'ควรซื้อ', 'ซื้ออะไร', 'เติมอะไร', 'ต้องเติม', 'วางแผน', 'แผนผลิต', 'วัตถุดิบ', 'ถ้า']));
 
   if (includesAny(query, ['เร่งด่วนสุด', 'ด่วนสุด', 'อะไรด่วน', 'สำคัญสุด', 'จัดลำดับ', 'ลำดับงาน', 'ต้องทำก่อน'])) {
     return { text: getPriorityText() };
@@ -138,6 +138,12 @@ function getAssistantResponse(rawQuery) {
     };
   }
 
+  if (query.includes('สูตร')) {
+    if (product) return { text: getRecipeText(product, requestedBatches) };
+    const productNames = [...new Set(appState.recipes.map((recipe) => recipe.product_name))];
+    return { text: productNames.length ? `มีสูตรผลิต ${productNames.length} รายการ: ${productNames.join(', ')}` : 'ยังไม่มีสูตรผลิตในระบบ' };
+  }
+
   if (productPlanIntent) {
     if (includesAny(query, ['ต้องซื้อ', 'ควรซื้อ', 'ซื้ออะไร', 'เติมอะไร', 'ต้องเติม', 'วางแผน', 'แผนผลิต', 'ถ้า'])) {
       return { text: getProductShoppingPlanText(product, requestedBatches) };
@@ -147,6 +153,10 @@ function getAssistantResponse(rawQuery) {
 
   if (includesAny(query, ['ควรผลิต', 'ผลิตอะไรก่อน', 'ผลิตตัวไหน', 'สินค้าไหนต้องผลิต'])) {
     return { text: getProductionPriorityText() };
+  }
+
+  if (includesAny(query, ['รายการซื้อ', 'ลิสต์ซื้อ', 'ใบซื้อ', 'ซื้อทั้งหมด', 'ต้องซื้อทั้งหมด'])) {
+    return { text: getPurchaseListText() };
   }
 
   if (includesAny(query, ['ใกล้หมด', 'ของหมด', 'ต้องซื้อ', 'ควรซื้อ', 'เติมอะไร', 'ต้องเติม', 'สั่งซื้อ', 'ต้องสั่ง', 'ต่ำกว่าเกณฑ์', 'ขาดอะไร'])) {
@@ -162,20 +172,18 @@ function getAssistantResponse(rawQuery) {
     return { text: getInventoryItemText(inventoryItem) };
   }
 
-  if (query.includes('สูตร')) {
-    if (product) return { text: getRecipeText(product) };
-    const productNames = [...new Set(appState.recipes.map((recipe) => recipe.product_name))];
-    return { text: productNames.length ? `มีสูตรผลิต ${productNames.length} รายการ: ${productNames.join(', ')}` : 'ยังไม่มีสูตรผลิตในระบบ' };
+  if (includesAny(query, ['สวัสดี', 'ช่วยอะไร', 'ทำอะไรได้', 'ใช้งานยังไง'])) {
+    return { text: 'ถามได้เลย เช่น ลูกชิ้น สูตรลูกชิ้น 5 ชุด อะไรเร่งด่วนสุด ถ้าจะผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร แป้งเหลือเท่าไร หรือเปิดหน้าสต๊อก' };
   }
 
-  if (includesAny(query, ['สวัสดี', 'ช่วยอะไร', 'ทำอะไรได้', 'ใช้งานยังไง'])) {
-    return { text: 'ถามได้เลย เช่น อะไรเร่งด่วนสุด ถ้าจะผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร ผลิตหมูยอสองชุดพอไหม แป้งเหลือเท่าไร หรือเปิดหน้าสต๊อก' };
-  }
+  if (product) return { text: getProductOverviewText(product) };
+
+  if (inventoryItem) return { text: getInventoryItemText(inventoryItem) };
 
   const nearbyItem = findInventoryItemInQuery(query, 0.28);
   if (nearbyItem) return { text: `หมายถึง ${nearbyItem.item_name} ใช่ไหม\n${getInventoryItemText(nearbyItem)}` };
 
-  return { text: 'ยังไม่เข้าใจคำถามนี้ ลองถามว่า อะไรเร่งด่วนสุด ต้องเติมอะไรบ้าง ถ้าจะผลิตลูกชิ้น 5 ชุดต้องซื้ออะไร หรือระบุชื่อวัตถุดิบที่ต้องการเช็ก' };
+  return { text: 'ยังไม่เข้าใจคำถามนี้ ลองถามว่า ลูกชิ้น สูตรลูกชิ้น 5 ชุด อะไรเร่งด่วนสุด ต้องเติมอะไรบ้าง หรือระบุชื่อวัตถุดิบที่ต้องการเช็ก' };
 }
 
 function findRequestedTab(query) {
@@ -226,6 +234,17 @@ function getRestockByCategoryText() {
     const more = items.length > 4 ? ` และอีก ${items.length - 4}` : '';
     return `${category}: ${items.length} รายการ (${names}${more})`;
   }).join('\n');
+}
+
+function getPurchaseListText() {
+  const lowRows = getRestockRows();
+  if (!lowRows.length) return 'ตอนนี้ยังไม่มีรายการที่ต้องซื้อเพิ่มตามขั้นต่ำ';
+  const lines = lowRows.slice(0, 15).map((item) => {
+    const missing = getMissingQty(item);
+    return `${item.item_name}: ${formatQty(missing)} ${item.unit}`;
+  });
+  const more = lowRows.length > 15 ? `\nและอีก ${lowRows.length - 15} รายการ เปิดหน้าสต๊อกเพื่อดูครบทั้งหมด` : '';
+  return `ลิสต์ซื้อจากขั้นต่ำสต๊อก ${lowRows.length} รายการ\n${lines.join('\n')}${more}`;
 }
 
 function getPriorityText() {
@@ -301,6 +320,29 @@ function getProductShoppingPlanText(product, requestedBatches) {
   return `${prefix}\nต้องซื้อ/เติมเพิ่ม ${missingRows.length} รายการ\n${lines.join('\n')}${hint}`;
 }
 
+function getProductOverviewText(product) {
+  const inventoryRow = appState.inventory.find((item) => item.item_id === product.item_id) || product;
+  const detail = getProductCapacityDetail(product);
+  const blocker = detail.blockers[0];
+  const shortName = getAssistantProductShortName(product);
+  const stockText = inventoryRow.item_name ? `${inventoryRow.item_name} คงเหลือ ${formatQty(inventoryRow.on_hand)} ${inventoryRow.unit || 'ชุด'}` : `${product.item_name}`;
+  const productionText = detail.recipes.length
+    ? `ตอนนี้ผลิตได้ประมาณ ${qty.format(detail.capacity)} ชุด${blocker ? ` ติดที่ ${blocker.itemName}` : ' วัตถุดิบพอ'}`
+    : 'ยังไม่มีสูตรผลิตในระบบ';
+  return [
+    stockText,
+    productionText,
+    `ถามต่อได้ เช่น "${shortName} 5 ชุดต้องซื้ออะไร" หรือ "สูตร${shortName} 5 ชุด"`
+  ].join('\n');
+}
+
+function getAssistantProductShortName(product) {
+  const name = String(product.item_name || 'สินค้า');
+  if (name.includes('ลูกชิ้น')) return 'ลูกชิ้น';
+  if (name.includes('หมูยอ')) return 'หมูยอ';
+  return name.replace(/สูตร.*$/g, '').trim() || name;
+}
+
 function getProductionPriorityText() {
   if (!appState.products.length) return 'ยังไม่มีสินค้าให้คำนวณการผลิต';
   const rows = appState.products.map((product) => {
@@ -364,10 +406,12 @@ function getInventoryItemText(item) {
   return `${item.item_name} คงเหลือ ${formatQty(onHand)} ${item.unit} (${status})${refill}`;
 }
 
-function getRecipeText(product) {
+function getRecipeText(product, requestedBatches = 0) {
   const recipes = appState.recipes.filter((recipe) => recipe.product_id === product.item_id);
   if (!recipes.length) return `${product.item_name} ยังไม่มีสูตรในระบบ`;
-  return `${product.item_name} ใช้วัตถุดิบต่อชุด\n${recipes.map((recipe) => `${recipe.ingredient_name} ${formatQty(recipe.qty_per_batch)} ${recipe.unit}`).join('\n')}`;
+  const batches = requestedBatches || 1;
+  const label = requestedBatches ? `สำหรับ ${batches} ชุด` : 'ต่อชุด';
+  return `${product.item_name} ใช้วัตถุดิบ${label}\n${recipes.map((recipe) => `${recipe.ingredient_name} ${formatQty(Number(recipe.qty_per_batch || 0) * batches)} ${recipe.unit}`).join('\n')}`;
 }
 
 function getRestockRows() {
